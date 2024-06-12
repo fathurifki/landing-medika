@@ -56,6 +56,15 @@
   dependencies:
     prismjs "^1.29.0"
 
+"@astrojs/tailwind@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@astrojs/tailwind/-/tailwind-5.1.0.tgz#f63d285825f448704dbdccb3430980fee7ba7d26"
+  integrity sha512-BJoCDKuWhU9FT2qYg+fr6Nfb3qP4ShtyjXGHKA/4mHN94z7BGcmauQK23iy+YH5qWvTnhqkd6mQPQ1yTZTe9Ig==
+  dependencies:
+    autoprefixer "^10.4.15"
+    postcss "^8.4.28"
+    postcss-load-config "^4.0.2"
+
 "@astrojs/telemetry@3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@astrojs/telemetry/-/telemetry-3.1.0.tgz#1038bea408a0f8cf363fb939afeefed751f1f86f"
@@ -1032,7 +1041,7 @@ astro@^4.10.2:
   optionalDependencies:
     sharp "^0.33.3"
 
-autoprefixer@^10.4.19:
+autoprefixer@^10.4.15:
   version "10.4.19"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.4.19.tgz#ad25a856e82ee9d7898c59583c1afeb3fa65f89f"
   integrity sha512-BaENR2+zBZ8xXhM4pUaKUxlVdxZ0EZhjvbopwnXmxRUfqDmwSpC2lAi/QXvx7NRdPCo1WKEcEF6mV64si1z4Ew==
@@ -2727,7 +2736,7 @@ postcss-js@^4.0.1:
   dependencies:
     camelcase-css "^2.0.1"
 
-postcss-load-config@^4.0.1:
+postcss-load-config@^4.0.1, postcss-load-config@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/postcss-load-config/-/postcss-load-config-4.0.2.tgz#7159dcf626118d33e299f485d6afe4aff7c4a3e3"
   integrity sha512-bSVhyJGL00wMVoPUzAVAnbEoWyqRxkjv64tUl427SKnPrENtq6hJwUojroMz2VB+Q1edmi4IfrAPpami5VVgMQ==
@@ -2755,7 +2764,7 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.2.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^8.4.23, postcss@^8.4.38:
+postcss@^8.4.23, postcss@^8.4.28, postcss@^8.4.38:
   version "8.4.38"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.38.tgz#b387d533baf2054288e337066d81c6bee9db9e0e"
   integrity sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==
