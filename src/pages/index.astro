@@ -1,10 +1,128 @@
 ---
-title: "Welcome to My Landing Page"
-layout: "../layouts/BaseLayout.astro"
+title: "Welcome to My Landing Page";
+layout: "../layouts/BaseLayout.astro";
+
+import Newscard from "@components/newscard/newscard.astro";
+import Layouts from "@layouts/Layouts.astro";
 ---
 
-<div class="container text-center p-12">
-  <div class="hero text-4xl mb-5 font-bold">Welcome to My Landing Page</div>
-  <div class="description text-xl mb-10">This is a simple landing page created with Astro. Explore the features and enjoy your stay!</div>
-  <button class="cta-button py-2 px-4 text-white bg-blue-600 border-none rounded cursor-pointer hover:bg-blue-800" onclick="alert('Button Clicked!')">Get Started</button>
-</div>
+<Layouts title="Home">
+  <main class="bg-white">
+    <section id="home" class="bg-cover bg-center text-white p-8 h-96 md:h-[500px]" style="background-image: url('https://aprimedik.com/assets/img/hero/banner_07.jpg');">
+      <div
+        class="container h-full flex flex-col text-center justify-center items-center mx-auto md:flex md:flex-col md:justify-center md:items-start"
+      >
+        <h1 class="text-4xl font-bold mb-4 text-red-400">
+          Indonesia's Premier Healthcare Partner
+        </h1>
+        <p class="text-lg text-[#002d5b] font-bold">Affordable Healthcare Solutions for Everyone</p>
+      </div>
+    </section>
+
+    <section id="products" class="p-8 h-auto overflow-x-auto">
+      <div class="container mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Healthcare Products</h2>
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="border border-gray-300 rounded-lg p-4">
+            <img
+              src="https://via.placeholder.com/150"
+              alt="Product 1"
+              class="w-full h-auto rounded-lg mb-4 border border-gray-300"
+            />
+            <h3 class="text-xl font-bold">Product 1</h3>
+            <p class="text-gray-600">Description of Product 1</p>
+          </div>
+          <div class="border border-gray-300 rounded-lg p-4">
+            <img
+              src="https://via.placeholder.com/150"
+              alt="Product 2"
+              class="w-full h-auto rounded-lg mb-4 border border-gray-300"
+            />
+            <h3 class="text-xl font-bold">Product 2</h3>
+            <p class="text-gray-600">Description of Product 2</p>
+          </div>
+          <div class="border border-gray-300 rounded-lg p-4">
+            <img
+              src="https://via.placeholder.com/150"
+              alt="Product 3"
+              class="w-full h-auto rounded-lg mb-4 border border-gray-300"
+            />
+            <h3 class="text-xl font-bold">Product 3</h3>
+            <p class="text-gray-600">Description of Product 3</p>
+          </div>
+          <div class="border border-gray-300 rounded-lg p-4">
+            <img
+              src="https://via.placeholder.com/150"
+              alt="Product 3"
+              class="w-full h-auto rounded-lg mb-4 border border-gray-300"
+            />
+            <h3 class="text-xl font-bold">Product 3</h3>
+            <p class="text-gray-600">Description of Product 3</p>
+          </div>
+          <!-- Add more products as needed -->
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="bg-gray-100 p-8 h-auto md:h-[400px]">
+      <div class="container mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Our Partner</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <img
+              src="/path/to/doctor1.jpg"
+              alt="Doctor 1"
+              class="w-32 h-32 rounded-full mx-auto mb-4"
+            />
+            <h3 class="text-xl font-bold">Dr. John Doe</h3>
+            <p>Cardiologist</p>
+          </div>
+          <div class="text-center">
+            <img
+              src="/path/to/doctor2.jpg"
+              alt="Doctor 2"
+              class="w-32 h-32 rounded-full mx-auto mb-4"
+            />
+            <h3 class="text-xl font-bold">Dr. Jane Smith</h3>
+            <p>Pediatrician</p>
+          </div>
+          <div class="text-center">
+            <img
+              src="/path/to/doctor3.jpg"
+              alt="Doctor 3"
+              class="w-32 h-32 rounded-full mx-auto mb-4"
+            />
+            <h3 class="text-xl font-bold">Dr. Emily Johnson</h3>
+            <p>Orthopedic Surgeon</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="news" class="p-8 h-auto md:h-full">
+      <div class="container mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Latest News</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Newscard
+            imgSrc="https://via.placeholder.com/260"
+            imgAlt="News 1"
+            title="Health Tips for the Summer"
+            description="Stay hydrated and protect your skin from the sun."
+          />
+          <Newscard
+            imgSrc="https://via.placeholder.com/260"
+            imgAlt="News 2"
+            title="New Pediatric Wing Opening"
+            description="We are excited to announce the opening of our new pediatric wing."
+          />
+          <Newscard
+            imgSrc="https://via.placeholder.com/260"
+            imgAlt="News 3"
+            title="Free Health Checkup Camp"
+            description="Join us for a free health checkup camp this weekend."
+          />
+        </div>
+      </div>
+    </section>
+  </main>
+</Layouts>

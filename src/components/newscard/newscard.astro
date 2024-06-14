@@ -1,0 +1,32 @@
+---
+import { Image } from "astro:assets";
+
+
+export interface NewsCardProps {
+    imgSrc: string;
+    imgAlt: string;
+    title: string;
+    description: string;
+}
+
+const { imgSrc, imgAlt, title, description } = Astro.props
+
+---
+
+<div>
+    <a href="/news-detail">
+        <Image
+            src={imgSrc}
+            alt={imgAlt}
+            class="w-full h-auto rounded-lg mb-4"
+            width="260"
+            height="260"
+        />
+        <h3 class="text-xl font-bold">
+            {title}
+        </h3>
+        <p class="line-clamp-3">
+            {description}
+        </p>
+    </a>
+</div>
