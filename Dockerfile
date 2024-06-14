@@ -4,12 +4,16 @@ WORKDIR /app
 
 COPY package.json yarn.lock ./
 
-RUN yarn install
-
 COPY . .
+
+RUN yarn install
 
 RUN yarn build
 
-EXPOSE 3000
+ENV HOST=0.0.0.0
 
-CMD ["yarn", "preview", "--host"]
+ENV PORT=4321
+
+EXPOSE 4321
+
+CMD node ./dist/server/entry.mjs
