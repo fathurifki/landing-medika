@@ -1,63 +1,111 @@
 ---
 import Layouts from "@layouts/Layouts.astro";
 
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+interface CatalogItem {
+    uuid: string,
+    date_created: Date,
+    date_updated: null,
+    product_name: string,
+    description: string,
+    upload_image: string,
+    category: null
+}
+
+interface FetchDataResponse {
+    catalogProduct: CatalogItem[];
+}
+
+async function fetchData(): Promise<FetchDataResponse | undefined> {
+    try {
+        const response = await fetch(`${API_URL}/items/Catalog`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // You can now use the fetched data as needed
+        return {
+            catalogProduct: data?.data,
+        };
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
+const { catalogProduct } = (await fetchData()) ?? { catalogProduct: [] };
 ---
+
 <Layouts title="products">
-<main class="p-8">
-    <section id="product-search" class="mb-8">
-        <input
-            type="text"
-            placeholder="Search products..."
-            class="w-full p-2 border border-gray-300 rounded"
-            oninput="filterProducts(event)"
-        />
-    </section>
-
-    <section id="product-filters" class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Filters</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-                <label for="category" class="block mb-2">Category</label>
-                <select id="category" class="w-full p-2 border border-gray-300 rounded" onchange="filterProducts(event)">
-                    <option value="">All</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="fashion">Fashion</option>
-                    <option value="home">Home</option>
-                </select>
-            </div>
-        </div>
-    </section>
-
-    <section id="product-list" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Example product -->
-        <div class="border border-gray-300 rounded-lg p-4">
-            <img
-                src="https://via.placeholder.com/150"
-                alt="Product 1"
-                class="w-full h-auto rounded-lg mb-4 border border-gray-300"
+    <main class="p-8">
+        <section id="product-search" class="mb-8">
+            <input
+                type="text"
+                placeholder="Search products..."
+                class="w-full p-2 border border-gray-300 rounded"
+                oninput="filterProducts(event)"
             />
-            <h3 class="text-xl font-bold">Product 1</h3>
-        </div>
-        <!-- More products will be dynamically inserted here -->
-    </section>
+        </section>
 
-    <section id="pagination" class="mt-8">
-        <button class="p-2 border border-gray-300 rounded" onclick="prevPage()">Previous</button>
-        <button class="p-2 border border-gray-300 rounded" onclick="nextPage()">Next</button>
-    </section>
-</main>
+        <section id="product-filters" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Filters</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="category" class="block mb-2">Category</label>
+                    <select
+                        id="category"
+                        class="w-full p-2 border border-gray-300 rounded"
+                        onchange="filterProducts(event)"
+                    >
+                        <option value="">All</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="fashion">Fashion</option>
+                        <option value="home">Home</option>
+                    </select>
+                </div>
+            </div>
+        </section>
 
-<script>
-    function filterProducts(event) {
-        // Implement product filtering logic here
-    }
+        <section
+            id="product-list"
+            class="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+            <!-- Example product -->
+            <div class="border border-gray-300 rounded-lg p-4">
+                <img
+                    src="https://via.placeholder.com/150"
+                    alt="Product 1"
+                    class="w-full h-auto rounded-lg mb-4 border border-gray-300"
+                />
+                <h3 class="text-xl font-bold">Product 1</h3>
+            </div>
+            <!-- More products will be dynamically inserted here -->
+        </section>
 
-    function prevPage() {
-        // Implement pagination logic for previous page
-    }
+        <section id="pagination" class="mt-8">
+            <button
+                class="p-2 border border-gray-300 rounded"
+                onclick="prevPage()">Previous</button
+            >
+            <button
+                class="p-2 border border-gray-300 rounded"
+                onclick="nextPage()">Next</button
+            >
+        </section>
+    </main>
 
-    function nextPage() {
-        // Implement pagination logic for next page
-    }
-</script>
+    <script>
+        function filterProducts(event) {
+            // Implement product filtering logic here
+        }
+
+        function prevPage() {
+            // Implement pagination logic for previous page
+        }
+
+        function nextPage() {
+            // Implement pagination logic for next page
+        }
+    </script>
 </Layouts>

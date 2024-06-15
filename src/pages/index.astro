@@ -1,128 +1,218 @@
 ---
 title: "Welcome to My Landing Page";
 layout: "../layouts/BaseLayout.astro";
-
+import { Image, Picture } from "astro:assets";
 import Newscard from "@components/newscard/newscard.astro";
 import Layouts from "@layouts/Layouts.astro";
+import "keen-slider/keen-slider.min.css";
+
+const slides = [
+  { id: 1, image: "https://via.placeholder.com/300", title: "Slide 1" },
+  { id: 2, image: "https://via.placeholder.com/300", title: "Slide 2" },
+  { id: 3, image: "https://via.placeholder.com/300", title: "Slide 3" },
+  { id: 4, image: "https://via.placeholder.com/300", title: "Slide 4" },
+  { id: 5, image: "https://via.placeholder.com/300", title: "Slide 5" },
+  { id: 6, image: "https://via.placeholder.com/300", title: "Slide 6" },
+  { id: 7, image: "https://via.placeholder.com/300", title: "Slide 7" },
+];
+
+const images = [
+  {
+    id: 1,
+    image: "https://aprimedik.com/image/inmedik_logo.png",
+  },
+  {
+    id: 2,
+    image: "https://aprimedik.com/image/falcon_logo.png",
+  },
+  {
+    id: 3,
+    image: "https://aprimedik.com/image/primus_logo.jpg",
+  },
+  {
+    id: 4,
+    image: "https://aprimedik.com/image/logoswayasa.png",
+  },
+];
+
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+interface BlogItem {
+  image: string;
+  blog_title: string;
+  content: string;
+  status: string;
+}
+
+interface FetchDataResponse {
+  blogData: BlogItem[];
+}
+
+async function fetchData(): Promise<FetchDataResponse | undefined> {
+  try {
+    const response = await fetch(`${API_URL}/items/Blog`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    // You can now use the fetched data as needed
+    return {
+      blogData: data?.data,
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+const { blogData } = (await fetchData()) ?? { blogData: [] };
 ---
 
 <Layouts title="Home">
   <main class="bg-white">
-    <section id="home" class="bg-cover bg-center text-white p-8 h-96 md:h-[500px]" style="background-image: url('https://aprimedik.com/assets/img/hero/banner_07.jpg');">
+    <section
+      id="home"
+      class="bg-cover bg-center text-white p-8 h-96 md:h-[500px]"
+      style="background-image: url('https://aprimedik.com/assets/img/hero/banner_07.jpg');"
+    >
       <div
         class="container h-full flex flex-col text-center justify-center items-center mx-auto md:flex md:flex-col md:justify-center md:items-start"
       >
         <h1 class="text-4xl font-bold mb-4 text-red-400">
           Indonesia's Premier Healthcare Partner
         </h1>
-        <p class="text-lg text-[#002d5b] font-bold">Affordable Healthcare Solutions for Everyone</p>
+        <p class="text-lg text-[#002d5b] font-bold">
+          Affordable Healthcare Solutions for Everyone
+        </p>
       </div>
     </section>
 
     <section id="products" class="p-8 h-auto overflow-x-auto">
       <div class="container mx-auto">
         <h2 class="text-2xl font-bold mb-4">Healthcare Products</h2>
-        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="border border-gray-300 rounded-lg p-4">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Product 1"
-              class="w-full h-auto rounded-lg mb-4 border border-gray-300"
-            />
-            <h3 class="text-xl font-bold">Product 1</h3>
-            <p class="text-gray-600">Description of Product 1</p>
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-1 gap-8">
+          <div class="keen-slider" id="keen-slider">
+            {
+              slides.map((slide) => (
+                <div class="keen-slider__slide" key={slide.id}>
+                  <Image
+                    width={300}
+                    height={300}
+                    src={slide.image}
+                    alt={slide.title}
+                  />
+                  <h3>{slide.title}</h3>
+                </div>
+              ))
+            }
           </div>
-          <div class="border border-gray-300 rounded-lg p-4">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Product 2"
-              class="w-full h-auto rounded-lg mb-4 border border-gray-300"
-            />
-            <h3 class="text-xl font-bold">Product 2</h3>
-            <p class="text-gray-600">Description of Product 2</p>
-          </div>
-          <div class="border border-gray-300 rounded-lg p-4">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Product 3"
-              class="w-full h-auto rounded-lg mb-4 border border-gray-300"
-            />
-            <h3 class="text-xl font-bold">Product 3</h3>
-            <p class="text-gray-600">Description of Product 3</p>
-          </div>
-          <div class="border border-gray-300 rounded-lg p-4">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Product 3"
-              class="w-full h-auto rounded-lg mb-4 border border-gray-300"
-            />
-            <h3 class="text-xl font-bold">Product 3</h3>
-            <p class="text-gray-600">Description of Product 3</p>
-          </div>
-          <!-- Add more products as needed -->
         </div>
       </div>
     </section>
 
     <section id="about" class="bg-gray-100 p-8 h-auto md:h-[400px]">
-      <div class="container mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Our Partner</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="text-center">
-            <img
-              src="/path/to/doctor1.jpg"
-              alt="Doctor 1"
-              class="w-32 h-32 rounded-full mx-auto mb-4"
-            />
-            <h3 class="text-xl font-bold">Dr. John Doe</h3>
-            <p>Cardiologist</p>
-          </div>
-          <div class="text-center">
-            <img
-              src="/path/to/doctor2.jpg"
-              alt="Doctor 2"
-              class="w-32 h-32 rounded-full mx-auto mb-4"
-            />
-            <h3 class="text-xl font-bold">Dr. Jane Smith</h3>
-            <p>Pediatrician</p>
-          </div>
-          <div class="text-center">
-            <img
-              src="/path/to/doctor3.jpg"
-              alt="Doctor 3"
-              class="w-32 h-32 rounded-full mx-auto mb-4"
-            />
-            <h3 class="text-xl font-bold">Dr. Emily Johnson</h3>
-            <p>Orthopedic Surgeon</p>
-          </div>
+      <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+        <div class="text-left md:w-1/2">
+          <h2 class="text-2xl font-bold mb-4">Our Trusted Healthcare Partners</h2>
+          <p class="mb-4">
+            We collaborate with leading healthcare providers to bring you innovative and affordable healthcare solutions. Our partnerships ensure that you receive the highest quality products and services tailored to meet your health needs.
+          </p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:w-1/2">
+          {
+            images?.map((item) => (
+              <div class="flex justify-center items-center">
+                <img
+                  src={item.image}
+                  alt="Partner Logo"
+                  loading="lazy"
+                  class="w-32 h-32 mx-auto mb-4 hover:filter-none filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out object-contain"
+                />
+              </div>
+            ))
+          }
         </div>
       </div>
     </section>
-
     <section id="news" class="p-8 h-auto md:h-full">
       <div class="container mx-auto">
         <h2 class="text-2xl font-bold mb-4">Latest News</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Newscard
-            imgSrc="https://via.placeholder.com/260"
-            imgAlt="News 1"
-            title="Health Tips for the Summer"
-            description="Stay hydrated and protect your skin from the sun."
-          />
-          <Newscard
-            imgSrc="https://via.placeholder.com/260"
-            imgAlt="News 2"
-            title="New Pediatric Wing Opening"
-            description="We are excited to announce the opening of our new pediatric wing."
-          />
-          <Newscard
-            imgSrc="https://via.placeholder.com/260"
-            imgAlt="News 3"
-            title="Free Health Checkup Camp"
-            description="Join us for a free health checkup camp this weekend."
-          />
+          {
+            blogData ? (
+              blogData.slice(0, 3).map((item) => (
+                item.status === 'published' && (
+                  <Newscard
+                    imgSrc={`${IMAGE_URL}/${item.image}`}
+                    imgAlt={item.blog_title}
+                    title={item.blog_title}
+                    description={item.content}
+                  />
+                )
+              ))
+            ) : (
+              <div class="col-span-3 text-center">
+                <p>Loading...</p>
+              </div>
+            )
+          }
         </div>
+        {blogData?.length > 3 && (
+          <div class="text-center mt-4">
+            <a href="/news" class="text-blue-500 hover:underline">Read More News</a>
+          </div>
+        )}
       </div>
     </section>
   </main>
 </Layouts>
+
+<script>
+  import KeenSlider from "keen-slider";
+  const animation = { duration: 30000, easing: (t) => t };
+  document.addEventListener("DOMContentLoaded", () => {
+    new KeenSlider("#keen-slider", {
+      breakpoints: {
+        "(min-width: 400px)": {
+          slides: { perView: 2, spacing: 5 },
+        },
+        "(min-width: 1000px)": {
+          slides: { perView: 3, spacing: 5 },
+        },
+      },
+      slides: { perView: 1 },
+      loop: true,
+      renderMode: "precision",
+      drag: false,
+      created(s) {
+        s.moveToIdx(5, true, animation);
+      },
+      updated(s) {
+        s.moveToIdx(s.track.details.abs + 5, true, animation);
+      },
+      animationEnded(s) {
+        s.moveToIdx(s.track.details.abs + 5, true, animation);
+      },
+    });
+  });
+</script>
+
+<style>
+  .keen-slider__slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .keen-slider__slide img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .keen-slider__slide h3 {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+</style>
