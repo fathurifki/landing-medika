@@ -1,12 +1,11 @@
 FROM node:alpine3.19
 
 # Install build tools
-RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile && yarn cache clean
+RUN yarn install && yarn cache clean
 
 COPY . .
 
@@ -14,7 +13,7 @@ COPY . .
 RUN yarn build
 
 # Cleanup
-RUN rm -rf /var/cache/apk/* /tmp/*
+# RUN rm -rf /var/cache/apk/* /tmp/*
 
 ENV HOST=0.0.0.0
 ENV PORT=4321
