@@ -11,7 +11,7 @@ RUN yarn install --frozen-lockfile && yarn cache clean
 COPY . .
 
 # Run build with verbose logging
-RUN yarn build --verbose
+RUN yarn build
 
 # Cleanup
 RUN rm -rf /var/cache/apk/* /tmp/*
