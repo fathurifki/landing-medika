@@ -6,59 +6,63 @@ import Newscard from "@components/newscard/newscard.astro";
 import Layouts from "@layouts/Layouts.astro";
 import "keen-slider/keen-slider.min.css";
 
-const slides = [
-  { id: 1, image: "https://via.placeholder.com/300", title: "Slide 1" },
-  { id: 2, image: "https://via.placeholder.com/300", title: "Slide 2" },
-  { id: 3, image: "https://via.placeholder.com/300", title: "Slide 3" },
-  { id: 4, image: "https://via.placeholder.com/300", title: "Slide 4" },
-  { id: 5, image: "https://via.placeholder.com/300", title: "Slide 5" },
-  { id: 6, image: "https://via.placeholder.com/300", title: "Slide 6" },
-  { id: 7, image: "https://via.placeholder.com/300", title: "Slide 7" },
-];
-
-const images = [
-  {
-    id: 1,
-    image: "https://aprimedik.com/image/inmedik_logo.png",
-  },
-  {
-    id: 2,
-    image: "https://aprimedik.com/image/falcon_logo.png",
-  },
-  {
-    id: 3,
-    image: "https://aprimedik.com/image/primus_logo.jpg",
-  },
-  {
-    id: 4,
-    image: "https://aprimedik.com/image/logoswayasa.png",
-  },
-];
-
 const API_URL = import.meta.env.PUBLIC_API;
 const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
 
-interface BlogItem {
-  image: string;
-  blog_title: string;
-  content: string;
-  status: string;
-}
-
-interface FetchDataResponse {
-  blogData: BlogItem[];
-}
-
-async function fetchData(): Promise<FetchDataResponse | undefined> {
+async function fetchData(): Promise<{ blogData: any[] } | undefined> {
   try {
     const response = await fetch(`${API_URL}/items/Blog`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    // You can now use the fetched data as needed
     return {
-      blogData: data?.data,
+      blogData: data?.data || [],
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+async function fetchCatalog(): Promise<{ catalogData: any[] } | undefined> {
+  try {
+    const response = await fetch(`${API_URL}/items/Catalog`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+      catalogData: data?.data || [],
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+async function fetchPartner(): Promise<{ partnerData: any[] } | undefined> {
+  try {
+    const response = await fetch(`${API_URL}/items/partners`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+      partnerData: data?.data || [],
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+async function fetchMedical(): Promise<{ medicalData: any[] } | undefined> {
+  try {
+    const response = await fetch(`${API_URL}/items/medical_specialty`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+      medicalData: data?.data || [],
     };
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -66,6 +70,9 @@ async function fetchData(): Promise<FetchDataResponse | undefined> {
 }
 
 const { blogData } = (await fetchData()) ?? { blogData: [] };
+const { catalogData } = (await fetchCatalog()) ?? { catalogData: [] };
+const { partnerData } = (await fetchPartner()) ?? { partnerData: [] };
+const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
 ---
 
 <Layouts title="Home">
@@ -78,53 +85,125 @@ const { blogData } = (await fetchData()) ?? { blogData: [] };
       <div
         class="container h-full flex flex-col text-center justify-center items-center mx-auto md:flex md:flex-col md:justify-center md:items-start"
       >
-        <h1 class="text-4xl font-bold mb-4 text-red-400">
+        <h1 class="text-4xl font-bold mb-4 text-[#C42425]">
           Indonesia's Premier Healthcare Partner
         </h1>
-        <p class="text-lg text-[#002d5b] font-bold">
-          Affordable Healthcare Solutions for Everyone
+        <p class="text-lg text-[#026294] font-bold">
+          Your trusted partner in medical device solutions
+        </p>
+      </div>
+    </section>
+
+    <section id="about-us" class="p-12 h-auto overflow-x-auto border-b">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold mb-6">About Us</h2>
+        <p class="mb-6 text-lg leading-relaxed">
+          APM philosophy is to make every patient deserve get high quality yet
+          affordable treatment with world class product from Europe and Asia.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          We do our best to cover all Indonesia hospitals both Private and
+          Government and involve association for educate doctor and nurses using
+          our product, make better patient treatment.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          Service is our key point with 24/7 on call service because we
+          understand that every patient must get non-stop treatment and our
+          device must function flawlessly all time. Our team always ready to
+          serve and provide only the best for you.
         </p>
       </div>
     </section>
 
     <section id="products" class="p-8 h-auto overflow-x-auto">
       <div class="container mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Medical Speciality Care</h2>
+        <div class="faq-section">
+          {
+            medicalData?.map((item) => (
+              <div class="faq-item">
+                <button class="faq-question">
+                  <b>{item.title}</b>
+                  <span class="faq-toggle">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </span>
+                </button>
+                <div class="faq-answer" set:html={item.description} />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="p-8 h-auto overflow-x-auto">
+      <div class="container mx-auto">
         <h2 class="text-2xl font-bold mb-4">Healthcare Products</h2>
-        <div class="container mx-auto grid grid-cols-1 md:grid-cols-1 gap-8">
-          <div class="keen-slider" id="keen-slider">
-            {
-              slides.map((slide) => (
-                <div class="keen-slider__slide" key={slide.id}>
-                  <Image
-                    width={300}
-                    height={300}
-                    src={slide.image}
-                    alt={slide.title}
-                  />
-                  <h3>{slide.title}</h3>
-                </div>
-              ))
-            }
-          </div>
+        <div class="keen-slider gap-4" id="keen-slider">
+          {
+            catalogData?.map((slide) => (
+              <div
+                class="keen-slider__slide"
+                data-key={slide.uuid}
+                style="flex: 0 0 auto; width: 250px;"
+              >
+                <Image
+                  src={`${IMAGE_URL}/${slide?.product_image}`}
+                  alt={slide?.name}
+                  width={250}
+                  height={250}
+                  class="w-full h-auto rounded-lg mb-4 object-contain"
+                  style="max-width: 250px; max-height: 250px;"
+                />
+              </div>
+            ))
+          }
         </div>
       </div>
     </section>
 
     <section id="about" class="bg-gray-100 p-8 h-auto md:h-[400px]">
-      <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+      <div
+        class="container mx-auto flex flex-col md:flex-row items-center justify-between"
+      >
         <div class="text-left md:w-1/2">
-          <h2 class="text-2xl font-bold mb-4">Our Trusted Healthcare Partners</h2>
+          <h2 class="text-2xl font-bold mb-4">
+            Our Trusted Healthcare Partners
+          </h2>
           <p class="mb-4">
-            We collaborate with leading healthcare providers to bring you innovative and affordable healthcare solutions. Our partnerships ensure that you receive the highest quality products and services tailored to meet your health needs.
+            We collaborate with leading healthcare providers to bring you
+            innovative and affordable healthcare solutions. Our partnerships
+            ensure that you receive the highest quality products and services
+            tailored to meet your health needs.
           </p>
+          <div class="text-left mt-4">
+            <button class="border border-gray-500 py-2 px-4 rounded">
+              <a href="/partners" class="text-gray-500 hover:text-gray-700"
+                >More</a
+              >
+            </button>
+          </div>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:w-1/2">
           {
-            images?.map((item) => (
+            partnerData?.slice(0, 8).map((item) => (
               <div class="flex justify-center items-center">
                 <img
-                  src={item.image}
-                  alt="Partner Logo"
+                  src={`${IMAGE_URL}/${item.logos}`}
+                  alt={item.name}
                   loading="lazy"
                   class="w-32 h-32 mx-auto mb-4 hover:filter-none filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out object-contain"
                 />
@@ -134,22 +213,26 @@ const { blogData } = (await fetchData()) ?? { blogData: [] };
         </div>
       </div>
     </section>
-    <section id="news" class="p-8 h-auto md:h-full">
+
+    <!-- <section id="about" class="p-8 h-auto md:h-[400px]">
       <div class="container mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Latest News</h2>
+        <h2 class="text-2xl font-bold mb-4">Medical Society Events</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           {
             blogData ? (
-              blogData.slice(0, 3).map((item) => (
-                item.status === 'published' && (
-                  <Newscard
-                    imgSrc={`${IMAGE_URL}/${item.image}`}
-                    imgAlt={item.blog_title}
-                    title={item.blog_title}
-                    description={item.content}
-                  />
+              blogData
+                .slice(0, 3)
+                .map(
+                  (item) =>
+                    item.status === "published" && (
+                      <Newscard
+                        imgSrc={`${IMAGE_URL}/${item?.image}`}
+                        imgAlt={item?.blog_title}
+                        title={item?.blog_title}
+                        description={item?.content}
+                      />
+                    ),
                 )
-              ))
             ) : (
               <div class="col-span-3 text-center">
                 <p>Loading...</p>
@@ -157,11 +240,121 @@ const { blogData } = (await fetchData()) ?? { blogData: [] };
             )
           }
         </div>
-        {blogData?.length > 3 && (
-          <div class="text-center mt-4">
-            <a href="/news" class="text-blue-500 hover:underline">Read More News</a>
+        {
+          blogData?.length > 3 && (
+            <div class="text-center mt-4">
+              <a href="/news" class="text-blue-500 hover:underline">
+                Read More News
+              </a>
+            </div>
+          )
+        }
+      </div>
+    </section> -->
+
+    <section id="news" class="border-b p-8 h-auto md:h-full">
+      <div class="container mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Latest News</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {
+            blogData ? (
+              blogData
+                .slice(0, 3)
+                .map(
+                  (item) =>
+                    item?.status === "published" && (
+                      <Newscard
+                        imgSrc={`${IMAGE_URL}/${item?.Banner}`}
+                        imgAlt={item?.Title}
+                        title={item?.Title}
+                        description={item?.Content}
+                        slugs={item?.slugs}
+                        id={item?.id}
+                      />
+                    ),
+                )
+            ) : (
+              <div class="col-span-3 text-center">
+                <p>Loading...</p>
+              </div>
+            )
+          }
+        </div>
+        {
+          blogData?.length > 3 && (
+            <div class="text-center mt-4">
+              <a href="/news" class="text-blue-500 hover:underline">
+                Read More News
+              </a>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <section id="news" class="p-8 h-auto md:h-full flex justify-center">
+      <div class="container mx-auto text-left">
+        <h2 class="text-3xl font-semibold mb-6 text-center">
+          Connect with Us for Business Inquiries
+        </h2>
+        <form
+          action="/send-message"
+          method="POST"
+          class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto"
+        >
+          <div class="col-span-1 md:col-span-2">
+            <label for="name" class="block mb-3">Your Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="w-full p-3 border border-gray-400 rounded-lg"
+              placeholder="Enter your full name"
+              required
+            />
           </div>
-        )}
+          <div>
+            <label for="email" class="block mb-3">Your Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="w-full p-3 border border-gray-400 rounded-lg"
+              placeholder="Enter your email address"
+              required
+            />
+          </div>
+          <div>
+            <label for="phone" class="block mb-3">Your Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="w-full p-3 border border-gray-400 rounded-lg"
+              placeholder="Enter your phone number"
+              required
+            />
+          </div>
+          <div class="col-span-1 md:col-span-2">
+            <label for="message" class="block mb-3">Your Message</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              class="w-full p-3 border border-gray-400 rounded-lg"
+              placeholder="Write your message here"
+              required></textarea>
+          </div>
+          <div class="honeypot" style="display:none;">
+            <label for="honeypot">Leave this field empty</label>
+            <input type="text" id="honeypot" name="honeypot" />
+          </div>
+          <div class="col-span-1 md:col-span-2 text-center">
+            <button type="submit" class="p-2 border border-gray-300 rounded">
+              Send Your Message
+            </button>
+          </div>
+        </form>
       </div>
     </section>
   </main>
@@ -169,21 +362,21 @@ const { blogData } = (await fetchData()) ?? { blogData: [] };
 
 <script>
   import KeenSlider from "keen-slider";
-  const animation = { duration: 30000, easing: (t) => t };
+  const animation = { duration: 25000, easing: (t) => t };
   document.addEventListener("DOMContentLoaded", () => {
     new KeenSlider("#keen-slider", {
+      loop: true,
+      mode: "snap",
+      slides: { origin: "center", perView: 5, spacing: 20 },
       breakpoints: {
         "(min-width: 400px)": {
-          slides: { perView: 2, spacing: 5 },
+          slides: { perView: 1, spacing: 5 },
         },
         "(min-width: 1000px)": {
-          slides: { perView: 3, spacing: 5 },
+          slides: { perView: 3, spacing: 100 },
         },
       },
-      slides: { perView: 1 },
-      loop: true,
       renderMode: "precision",
-      drag: false,
       created(s) {
         s.moveToIdx(5, true, animation);
       },
@@ -193,6 +386,21 @@ const { blogData } = (await fetchData()) ?? { blogData: [] };
       animationEnded(s) {
         s.moveToIdx(s.track.details.abs + 5, true, animation);
       },
+    });
+  });
+
+  document.querySelectorAll(".faq-question").forEach((button) => {
+    button.addEventListener("click", () => {
+      button.classList.toggle("active");
+      const answer = button.nextElementSibling;
+      const icon = button.querySelector(".faq-toggle svg");
+      if (button.classList.contains("active")) {
+        answer.style.display = "block";
+        icon.setAttribute("d", "M19 9l-7 7-7-7");
+      } else {
+        answer.style.display = "none";
+        icon.setAttribute("d", "M19 15l-7-7-7 7");
+      }
     });
   });
 </script>
@@ -214,5 +422,35 @@ const { blogData } = (await fetchData()) ?? { blogData: [] };
     margin-top: 10px;
     font-size: 1.2rem;
     text-align: center;
+  }
+
+  .faq-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .faq-item {
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  .faq-question {
+    background: #f9f9f9;
+    padding: 1rem;
+    width: 100%;
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-answer {
+    display: none;
+    padding: 1rem;
+    background: #fff;
+  }
+  .faq-question.active + .faq-answer {
+    display: block;
   }
 </style>

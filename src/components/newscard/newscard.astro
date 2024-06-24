@@ -6,23 +6,26 @@ export interface NewsCardProps {
     imgAlt: string;
     title: string;
     description: string;
+    slugs: string;
 }
 
-const { imgSrc, imgAlt, title, description } = Astro.props;
+const { imgSrc, imgAlt, title, description, slugs, id } = Astro.props;
 ---
 
 <div>
-    <a href="/news-detail">
+    <a href={`/news-detail/${id}/${slugs}`}>
         <Image
             src={imgSrc}
             alt={imgAlt}
-            class="w-full h-auto rounded-lg mb-4 object-cover"
-            width="260"
-            height="260"
+            width={250}
+            height={250}
+            class="w-full h-auto rounded-lg mb-4 object-contain"
+            style="max-width: 250px; max-height: 250px;"
         />
         <h3 class="text-xl font-bold">
             {title}
         </h3>
-        <div set:html={description} />
+        <div class="line-clamp-3" set:html={description} />
     </a>
 </div>
+

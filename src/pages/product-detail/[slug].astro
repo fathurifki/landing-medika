@@ -1,0 +1,11 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import DetailPage from "@components/page/DetailPage/index.jsx";
+const { slug } = Astro.params;
+---
+
+<Layouts title="products">
+    <main class="p-8">
+        <DetailPage client:load slug={slug} />
+    </main>
+</Layouts>

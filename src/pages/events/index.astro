@@ -1,0 +1,50 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import { Image } from "astro:assets";
+import EventGallery from "@components/page/events/index.astro";
+
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+export async function getStaticPaths() {
+    const response = await fetch(`${API_URL}/items/event_types`);
+    const data = await response.json();
+    const events = data?.data;
+
+    return {
+        paths: events?.map((event) => ({
+            params: { slug: event.slug },
+        })),
+        fallback: false,
+    };
+}
+
+async function getCategory({ params }) {
+    const response = await fetch(`${API_URL}/items/event_types`);
+    const event = await response.json();
+    return {
+        eventCategory: event?.data,
+    };
+}
+
+async function getEvent({ event_slug }) {
+    const filter = JSON.stringify({ event_name: { _eq: event_slug } });
+    const newUrlParam = `${API_URL}/items/Events?filter=${filter}`;
+    const response = await fetch(newUrlParam);
+    const event = await response.json();
+    return {
+        event: event.data,
+    };
+}
+
+const { event } = await getEvent({ event_slug: "inasia" });
+const { eventCategory } = await getCategory({ params: {} });
+---
+
+<Layouts title="Events">
+    <EventGallery
+        eventCategory={eventCategory}
+        event={event}
+        IMAGE_URL={IMAGE_URL}
+    />
+</Layouts>

@@ -1,0 +1,89 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import { Image } from "astro:assets";
+import { SEO } from "astro-seo";
+
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+const { slug, id } = Astro.params;
+
+async function getDetail() {
+    const response = await fetch(`${API_URL}/items/Blog/${id}`);
+    const data = await response.json();
+    return data;
+}
+
+const detail = await getDetail();
+---
+
+<Layouts title="detail">
+    <SEO
+        title={detail?.data?.Title}
+        description={detail?.data?.Content}
+        openGraph={{
+            basic: {
+                title: detail?.data?.Title,
+                type: 'article',
+                image: `${IMAGE_URL}/${detail?.data?.Banner}`,
+            },
+            optional: {
+                description: detail?.data?.Content,
+            }
+        }}
+    />
+    <main class="p-8">
+        <article class="max-w-3xl mx-auto">
+            <header class="mb-8">
+                <h1 class="text-4xl font-bold mb-4">{detail?.data?.Title}</h1>
+                <p class="text-gray-600">
+                    Published on: <time datetime="2023-10-01"
+                        >October 1, 2023</time
+                    >
+                </p>
+            </header>
+            <section class="mb-8">
+                <Image
+                    src={`${IMAGE_URL}/${detail?.data?.Banner}`}
+                    alt={detail?.data?.Title}
+                    class="w-full h-auto rounded-lg mb-4"
+                    width="260"
+                    height="260"
+                />
+                <Fragment
+                    class="text-lg leading-relaxed"
+                    set:html={detail?.data?.Content}
+                />
+            </section>
+            <footer class="mt-8">
+                <p class="text-gray-600">Author: John Doe</p>
+            </footer>
+            <section class="mt-8">
+                <h2 class="text-2xl font-bold mb-4">Tags</h2>
+                <div class="flex flex-wrap gap-2">
+                    {
+                        detail?.data?.tags.map((tag) => {
+                            let bgColor;
+                            do {
+                                const r = Math.floor(Math.random() * 256);
+                                const g = Math.floor(Math.random() * 256);
+                                const b = Math.floor(Math.random() * 256);
+                                bgColor = `rgb(${r}, ${g}, ${b})`;
+                            } while (bgColor === "rgb(255, 255, 255)");
+
+                            const textColor = "#ffffff";
+                            return (
+                                <span
+                                    style={`background-color: ${bgColor}; color: ${textColor};`}
+                                    class="text-sm font-medium mr-2 px-2.5 py-0.5 rounded"
+                                >
+                                    {tag}
+                                </span>
+                            );
+                        })
+                    }
+                </div>
+            </section>
+        </article>
+    </main>
+</Layouts>

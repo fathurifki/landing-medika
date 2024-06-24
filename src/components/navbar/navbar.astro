@@ -1,13 +1,158 @@
-<header class="sticky top-0 p-[1em] left-0 w-full z-50 bg-[#012C5B] shadow-md text-white">
-    <div class="flex justify-between items-center">
-        <h1><a href="/">My Landing Page</a></h1>
-        <nav class="font-bold">
-            <ul class="flex space-x-4">
-                <li><a href="#home">Home</a></li>
-                <li><a href="/products">Product</a></li>
-                <li><a href="/news">News</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
+---
+import {
+    Astronav,
+    MenuItems,
+    MenuIcon,
+    Dropdown,
+    DropdownItems,
+    DropdownSubmenu,
+} from "astro-navbar";
+import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+async function getNavbar() {
+    const response = await fetch(`${API_URL}/items/Catalog?limit=10`);
+    const category = await fetch(`${API_URL}/items/category_product`);
+    const data = await response.json();
+    const categoryData = await category.json();
+    return {
+        catalog: data?.data,
+        category: categoryData?.data,
+    };
+}
+
+const { catalog, category } = await getNavbar();
+---
+
+<div
+    class="hidden text-sm md:flex p-4 flex-col md:flex-row md:justify-between md:items-center text-gray-700 bg-white shadow"
+>
+    <div class="flex flex-col md:flex-row md:items-center">
+        <span class="flex items-center mb-2 md:mb-0 md:mr-4">
+            <Icon name="mdi:map-marker" class="mr-2 text-red-500" />
+            <span class="font-semibold"
+                >Komp. Ruko Cempaka Mas No 29, Jl. Letjend. Suprapto, Jakarta
+                Pusat, DKI Jakarta 10640, Indonesia</span
+            >
+        </span>
+        <span class="flex items-center">
+            <Icon name="mdi:email-outline" class="mr-2 text-blue-500" />
+            <span class="font-semibold">info@apm-medika.com</span>
+        </span>
     </div>
-</header>
+    <div class="flex flex-row items-center">
+        <Icon name="mdi:phone" class="mr-2 text-green-500" />
+        <span class="font-semibold">+62 81234567890</span>
+    </div>
+</div>
+<Astronav>
+    <div
+        class="sticky top-0 z-20 flex flex-col lg:flex-row lg:items-center lg:justify-between h-full lg:h-[10vh] lg:p-6 bg-[#2980B9] bg-gradient-to-r from-[#FFFFFF] via-[#6DD5FA] to-[#2980B9] text-white"
+    >
+        <div class="flex justify-between p-2">
+            <a href="/">
+                <Image
+                    src="/public/APM.png"
+                    width={200}
+                    height={200}
+                    alt="My Landing Page"
+                    class="mb-4 lg:mb-0 lg:mr-8"
+                />
+            </a>
+            <MenuIcon class="lg:hidden" />
+        </div>
+        <MenuItems
+            class="hidden flex flex-col border-t border-gray-300 items-end h-full text-[#1B2F59] p-2 lg:flex lg:flex-row lg:justify-center lg:items-center lg:border-none"
+        >
+            <ul
+                class="flex flex-col lg:flex-row lg:items-center lg:justify-end lg:space-x-4 h-full text-right"
+            >
+                <li class="mb-2 lg:mb-0">
+                    <Dropdown class="group">
+                        <button class="content">
+                            <span class="text-white font-bold"
+                                >Healthcare Product</span
+                            >
+                        </button>
+                        <DropdownItems
+                            class="hidden group-focus:block absolute bg-white shadow-lg rounded-md mt-2 z-30"
+                        >
+                            <ul
+                                class="grid grid-cols-2 gap-4 p-4 text-right lg:text-left"
+                            >
+                                {
+                                    catalog?.map((item) => (
+                                        <li data-key={item?.id}>
+                                            <a
+                                                href={`/products/${item?.slugs}`}
+                                                class="hover:underline text-left"
+                                            >
+                                                {item?.name}
+                                            </a>
+                                        </li>
+                                    ))
+                                }
+                                <li>
+                                    <a
+                                        href="/products"
+                                        class="hover:underline text-left font-bold"
+                                        >More...</a
+                                    >
+                                </li>
+                            </ul>
+                        </DropdownItems>
+                    </Dropdown>
+                </li>
+                <li class="mb-2 lg:mb-0">
+                    <Dropdown class="group relative">
+                        <button class="flex item">
+                            <span
+                                class="text-white font-bold text-left md:text-right"
+                                >Medical Speciality Care</span
+                            >
+                        </button>
+                        <DropdownItems
+                            class="hidden group-focus:block absolute bg-white shadow-lg rounded-md mt-2 z-30"
+                        >
+                            <DropdownSubmenu>
+                                <ul
+                                    class="flex flex-col space-y-2 p-4 text-right lg:text-left"
+                                >
+                                    {
+                                        category?.map((item) => (
+                                            <li>
+                                                <a
+                                                    href={`/products/${item?.id}`}
+                                                    class="hover:underline text-left md:text-right"
+                                                >
+                                                    {item?.name}
+                                                </a>
+                                            </li>
+                                        ))
+                                    }
+                                </ul>
+                            </DropdownSubmenu>
+                        </DropdownItems>
+                    </Dropdown>
+                </li>
+                <li class="mb-2 lg:mb-0">
+                    <a
+                        href="/events"
+                        class="hover:underline text-white font-bold"
+                        >Medical Society Event</a
+                    >
+                </li>
+                <li class="mb-2 lg:mb-0">
+                    <a
+                        href="/partners"
+                        class="hover:underline text-white font-bold"
+                        >Our Partners</a
+                    >
+                </li>
+            </ul>
+        </MenuItems>
+    </div>
+</Astronav>

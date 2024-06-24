@@ -1,0 +1,66 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+async function getLogo() {
+    const response = await fetch(`${API_URL}/items/partners`);
+    const data = await response.json();
+    return {
+        logo: data?.data,
+    };
+}
+
+const { logo } = await getLogo();
+const internationalLogo = await logo?.filter((items) => items.partnership_types === 1);
+const localLogo = await logo?.filter((items) => items.partnership_types === 2);
+---
+
+<Layouts title="Partners">
+    <main class="h-screen">
+        <section id="international-partners" class="p-8 h-auto">
+            <div class="container mx-auto">
+                <h2 class="text-2xl font-bold mb-4 text-center">
+                    International Partners
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {
+                        internationalLogo?.map((item) => (
+                            <div class="flex justify-center items-center relative group">
+                                <img
+                                    src={`${IMAGE_URL}/${item?.logos}`}
+                                    alt="Partner Logo"
+                                    loading="lazy"
+                                    class="w-32 h-32 mx-auto mb-4 hover:filter-none filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out object-contain"
+                                />
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section id="local-partners" class="p-8 h-auto">
+            <div class="container mx-auto">
+                <h2 class="text-2xl font-bold mb-4 text-center">
+                    Local Partners
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {
+                        localLogo?.map((item) => (
+                            <div class="flex justify-center items-center">
+                                <img
+                                    src={`${IMAGE_URL}/${item?.logos}`}
+                                    alt="Partner Logo"
+                                    loading="lazy"
+                                    class="w-32 h-32 mx-auto mb-4 hover:filter-none filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out object-contain"
+                                />
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
+    </main>
+</Layouts>
