@@ -8,14 +8,8 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
-FROM base AS build
+RUN yarn install
 RUN yarn build
-
-FROM node:alpine3.19 AS final
-WORKDIR /app
-
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
 
 ENV HOST=0.0.0.0
 ENV PORT=4321
