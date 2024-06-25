@@ -1,4 +1,4 @@
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import icons from "astro-icon";
@@ -15,10 +15,4 @@ export default defineConfig({
     adapter: node({
         mode: "standalone"
     }),
-    vite: {
-        define: {
-            'process.env.PUBLIC_API': JSON.stringify(import.meta.env.PUBLIC_API),
-            'process.env.PUBLIC_IMAGE': JSON.stringify(import.meta.env.PUBLIC_IMAGE)
-        }
-    }
 }); 

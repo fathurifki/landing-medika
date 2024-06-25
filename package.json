@@ -10,7 +10,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "prod": "node dist/server/entry.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^8.3.2",
