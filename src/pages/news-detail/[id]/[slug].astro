@@ -3,8 +3,8 @@ import Layouts from "@layouts/Layouts.astro";
 import { Image } from "astro:assets";
 import { SEO } from "astro-seo";
 
-const API_URL = import.meta.env.PUBLIC_API ?? process.env.PUBLIC_API;
-const IMAGE_URL = import.meta.env.PUBLIC_IMAGE ?? process.env.PUBLIC_IMAGE;
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
 
 const { slug, id } = Astro.params;
 
@@ -24,12 +24,12 @@ const detail = await getDetail();
         openGraph={{
             basic: {
                 title: detail?.data?.Title,
-                type: 'article',
+                type: "article",
                 image: `${IMAGE_URL}/${detail?.data?.Banner}`,
             },
             optional: {
                 description: detail?.data?.Content,
-            }
+            },
         }}
     />
     <main class="p-8">

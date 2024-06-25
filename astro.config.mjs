@@ -17,7 +17,8 @@ export default defineConfig({
     }),
     vite: {
         define: {
-            'process.env.PUBLIC_API': JSON.stringify(process.env.PUBLIC_API)
+            'process.env.PUBLIC_API': JSON.stringify(import.meta.env.PUBLIC_API),
+            'process.env.PUBLIC_IMAGE': JSON.stringify(import.meta.env.PUBLIC_IMAGE)
         }
     }
 }); 

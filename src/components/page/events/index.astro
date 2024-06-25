@@ -1,6 +1,5 @@
 ---
 import { Image } from "astro:assets";
-
 const { eventCategory, event, IMAGE_URL } = Astro.props;
 ---
 
@@ -27,7 +26,9 @@ const { eventCategory, event, IMAGE_URL } = Astro.props;
         {
             event?.map((event) => (
                 <div>
-                    <span class="text-md mb-6" style="text-align: justify;">{event?.event_description}</span>
+                    <span class="text-md mb-6" style="text-align: justify;">
+                        {event?.event_description}
+                    </span>
                     <div class="gallery grid grid-cols-1 mt-6 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-scroll md:mt-6">
                         <Image
                             src={`${IMAGE_URL}/${event.event_image}`}
