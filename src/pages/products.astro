@@ -2,8 +2,8 @@
 import Layouts from "@layouts/Layouts.astro";
 import InputComponent from "@components/input/InputComponent.jsx";
 import { SEO } from "astro-seo";
-const API_URL = import.meta.env.PUBLIC_API;
-const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+const API_URL = import.meta.env.PUBLIC_API ?? process.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE ?? process.env.PUBLIC_IMAGE;
 ---
 
 <Layouts title="products">

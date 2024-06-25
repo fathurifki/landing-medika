@@ -3,8 +3,8 @@ import DOMPurify from 'isomorphic-dompurify';
 import styles from "./detail.module.css"
 
 const DetailPage = ({ ...props }) => {
-    const API_URL = import.meta.env.PUBLIC_API;
-    const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+    const API_URL = import.meta.env.PUBLIC_API ?? process.env.PUBLIC_API;
+    const IMAGE_URL = import.meta.env.PUBLIC_IMAGE ?? process.env.PUBLIC_IMAGE;
 
     const [images, setImages] = useState([]);
     const [video, setVideo] = useState({});
