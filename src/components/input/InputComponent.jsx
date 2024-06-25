@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const InputComponent = ({ ...props }) => {
-    const API_URL = import.meta.env.PUBLIC_API;
-    const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
-
-
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState({
         name: {
@@ -48,7 +44,7 @@ const InputComponent = ({ ...props }) => {
                 limit: searchTerm?.limit
             };
             const qp = new URLSearchParams(query);
-            url = `${API_URL}/items/Catalog?${qp}`;
+            url = `${props.API_URL}/items/Catalog?${qp}`;
 
             const response = await fetch(url);
             if (!response.ok) {
