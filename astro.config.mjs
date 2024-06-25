@@ -10,7 +10,7 @@ export default defineConfig({
         include: ['**/react/*']
     })],
     compressHTML: true,
-    output: 'server',
+    output: 'hybrid',
     security: {
         checkOrigin: true
     },
