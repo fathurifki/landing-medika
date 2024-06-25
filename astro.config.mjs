@@ -10,11 +10,16 @@ export default defineConfig({
         include: ['**/react/*']
     })],
     compressHTML: true,
-    // output: 'server',
-    // security: {
-    //     checkOrigin: true
-    // },
-    // adapter: node({
-    //     mode: "standalone"
-    // })
-});
+    output: 'server',
+    security: {
+        checkOrigin: true
+    },
+    adapter: node({
+        mode: "standalone"
+    }),
+    vite: {
+        define: {
+            'process.env.PUBLIC_API': JSON.stringify(process.env.PUBLIC_API)
+        }
+    }
+}); 
