@@ -1,0 +1,78 @@
+---
+import { Image, Picture } from "astro:assets";
+import Layouts from "@layouts/Layouts.astro";
+import Newscard from "@components/newscard/newscard.astro";
+import { Icon } from "astro-icon/components";
+
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+const url = new URL(Astro.request.url);
+const page = url.searchParams.get("page") || "1";
+const currentPage = isNaN(parseInt(page, 10)) ? 1 : parseInt(page, 10);
+const fetchBlogs = async ({}) => {
+    const response = await fetch(`${API_URL}/items/Blog?page=${page}`);
+    const data = await response.json();
+    return data.data;
+};
+
+const blogs = await fetchBlogs({ page: currentPage });
+---
+
+<Layouts title="News">
+    <main class="h-full relative">
+        <section id="blog" class="p-8 h-full overflow-scroll">
+            <div class="container mx-auto">
+                <h2 class="text-2xl font-bold mb-4">News</h2>
+                {
+                    blogs?.length > 0 ? (
+                        blogs.map((item) => (
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <Newscard
+                                    imgSrc={`${IMAGE_URL}/${item?.Banner}`}
+                                    imgAlt={item?.Title}
+                                    title={item?.Title}
+                                    description={item?.Content}
+                                    slugs={item?.slugs}
+                                    id={item?.id}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <div class="flex justify-center items-center h-[500px]">
+                            <p class="text-center text-lg font-medium">
+                                No news here
+                            </p>
+                        </div>
+                    )
+                }
+            </div>
+            <div
+                class="flex justify-end items-end mt-8 gap-4 absolute bottom-0 right-0 p-4"
+            >
+                <a
+                    class="p-2 rounded block text-center flex items-center"
+                    href={`/news?page=${currentPage - 1}`}
+                    style="pointer-events: ${!hasPreviousPage ? 'none' : 'auto'}; opacity: ${!hasPreviousPage ? '0.5' : '1'};"
+                >
+                    <Icon
+                        name="material-symbols:keyboard-arrow-left"
+                        class="mr-2"
+                    />
+                    Previous
+                </a>
+                <a
+                    class="p-2 rounded block text-center flex items-center"
+                    href={`/news?page=${currentPage + 1}`}
+                    style="pointer-events: ${!hasNextPage ? 'none' : 'auto'}; opacity: ${!hasNextPage ? '0.5' : '1'};"
+                >
+                    Next
+                    <Icon
+                        name="material-symbols:keyboard-arrow-right"
+                        class="ml-2"
+                    />
+                </a>
+            </div>
+        </section>
+    </main>
+</Layouts>

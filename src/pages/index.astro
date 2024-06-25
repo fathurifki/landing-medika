@@ -167,6 +167,8 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
                   height={250}
                   class="w-full h-auto rounded-lg mb-4 object-contain"
                   style="max-width: 250px; max-height: 250px;"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             ))
@@ -201,10 +203,14 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
           {
             partnerData?.slice(0, 8).map((item) => (
               <div class="flex justify-center items-center">
-                <img
+                <Image
                   src={`${IMAGE_URL}/${item.logos}`}
                   alt={item.name}
                   loading="lazy"
+                  height={100}
+                  width={100}
+                  style="max-width: 100px; max-height: 100px;"
+                  decoding="async"
                   class="w-32 h-32 mx-auto mb-4 hover:filter-none filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out object-contain"
                 />
               </div>
@@ -213,44 +219,6 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
         </div>
       </div>
     </section>
-
-    <!-- <section id="about" class="p-8 h-auto md:h-[400px]">
-      <div class="container mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Medical Society Events</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {
-            blogData ? (
-              blogData
-                .slice(0, 3)
-                .map(
-                  (item) =>
-                    item.status === "published" && (
-                      <Newscard
-                        imgSrc={`${IMAGE_URL}/${item?.image}`}
-                        imgAlt={item?.blog_title}
-                        title={item?.blog_title}
-                        description={item?.content}
-                      />
-                    ),
-                )
-            ) : (
-              <div class="col-span-3 text-center">
-                <p>Loading...</p>
-              </div>
-            )
-          }
-        </div>
-        {
-          blogData?.length > 3 && (
-            <div class="text-center mt-4">
-              <a href="/news" class="text-blue-500 hover:underline">
-                Read More News
-              </a>
-            </div>
-          )
-        }
-      </div>
-    </section> -->
 
     <section id="news" class="border-b p-8 h-auto md:h-full">
       <div class="container mx-auto">
@@ -282,8 +250,11 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
         </div>
         {
           blogData?.length > 3 && (
-            <div class="text-center mt-4">
-              <a href="/news" class="text-blue-500 hover:underline">
+            <div class="text-center mt-4 ">
+              <a
+                href="/news"
+                class="border p-2 rounded-md text-lg hover:text-gray-700 text-black font-semibold"
+              >
                 Read More News
               </a>
             </div>

@@ -24,7 +24,14 @@ async function getNavbar() {
     };
 }
 
+const fetchCompany = async () => {
+    const response = await fetch(`${API_URL}/items/Company`);
+    const data = await response.json();
+    return data.data;
+};
+
 const { catalog, category } = await getNavbar();
+const company = await fetchCompany();
 ---
 
 <div
@@ -34,18 +41,17 @@ const { catalog, category } = await getNavbar();
         <span class="flex items-center mb-2 md:mb-0 md:mr-4">
             <Icon name="mdi:map-marker" class="mr-2 text-red-500" />
             <span class="font-semibold"
-                >Komp. Ruko Cempaka Mas No 29, Jl. Letjend. Suprapto, Jakarta
-                Pusat, DKI Jakarta 10640, Indonesia</span
+                >{company?.address}</span
             >
         </span>
         <span class="flex items-center">
             <Icon name="mdi:email-outline" class="mr-2 text-blue-500" />
-            <span class="font-semibold">info@apm-medika.com</span>
+            <span class="font-semibold">{company?.email_address}</span>
         </span>
     </div>
     <div class="flex flex-row items-center">
         <Icon name="mdi:phone" class="mr-2 text-green-500" />
-        <span class="font-semibold">+62 81234567890</span>
+        <span class="font-semibold">{company?.phone_number}</span>
     </div>
 </div>
 <Astronav>
@@ -55,11 +61,14 @@ const { catalog, category } = await getNavbar();
         <div class="flex justify-between p-2">
             <a href="/">
                 <Image
-                    src="/public/APM.png"
+                    src={`${IMAGE_URL}/${company?.logo_navbar}`}
                     width={200}
                     height={200}
                     alt="My Landing Page"
                     class="mb-4 lg:mb-0 lg:mr-8"
+                    loading="lazy"
+                    decoding="async"
+                    style="max-width: 200px; max-height: 200px;"
                 />
             </a>
             <MenuIcon class="lg:hidden" />

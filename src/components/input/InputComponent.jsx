@@ -79,7 +79,7 @@ const InputComponent = ({ ...props }) => {
                 type="text"
                 value={searchTerm.name._eq}
                 onChange={(e) => setSearchTerm({ ...searchTerm, name: { _eq: e.target.value } })}
-                placeholder="Enter text"
+                placeholder="Search product name"
                 className="w-full p-2 border border-gray-300 rounded"
             />
 
@@ -113,28 +113,34 @@ const InputComponent = ({ ...props }) => {
                     class="grid grid-cols-1 md:grid-cols-3 gap-8"
                 >
                     {
-                        products?.map((product) => (
-                            <div class="flex flex-col h-full">
-                                <div class="border border-gray-300 rounded-lg p-4 flex-grow flex justify-center items-center h-full">
-                                    <div class="mb-4">
-                                        <a href={`/product-detail/${product?.uuid}`}>
-                                            <img
-                                                src={`${IMAGE_URL}/${product?.product_image}`}
-                                                alt={product?.name}
-                                                width={300}
-                                                height={300}
-                                                className="w-full h-auto rounded-lg object-contain"
-                                                style={{ maxWidth: '300px', maxHeight: '300px' }}
-                                            />
-                                        </a>
+                        products?.length ? (
+                            products.map((product) => (
+                                <div class="flex flex-col h-full">
+                                    <div class="border border-gray-300 rounded-lg p-4 flex-grow flex justify-center items-center h-full">
+                                        <div class="mb-4">
+                                            <a href={`/product-detail/${product?.uuid}`}>
+                                                <img
+                                                    src={`${IMAGE_URL}/${product?.product_image}`}
+                                                    alt={product?.name}
+                                                    width={300}
+                                                    height={300}
+                                                    className="w-full h-auto rounded-lg object-contain"
+                                                    style={{ maxWidth: '300px', maxHeight: '300px' }}
+                                                />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <h3 class="text-xl font-bold">{product?.name}</h3>
+                                        <p>{product?.tags?.join(", ")}</p>
                                     </div>
                                 </div>
-                                <div class="mt-2">
-                                    <h3 class="text-xl font-bold">{product?.name}</h3>
-                                    <p>{product?.tags?.join(", ")}</p>
-                                </div>
+                            ))
+                        ) : (
+                            <div class="flex justify-center items-center col-span-full">
+                                <p class="text-lg font-semibold">No products found here</p>
                             </div>
-                        ))
+                        )
                     }
                 </section>
             )}

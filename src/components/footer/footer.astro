@@ -1,14 +1,38 @@
 ---
 import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+
+const API_URL = import.meta.env.PUBLIC_API;
+const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+const fetchCategory = async () => {
+    const response = await fetch(`${API_URL}/items/category_product`);
+    const data = await response.json();
+    return data.data;
+};
+
+const fetchCompany = async () => {
+    const response = await fetch(`${API_URL}/items/Company`);
+    const data = await response.json();
+    return data.data;
+};
+
+const categories = await fetchCategory();
+const company = await fetchCompany();
 ---
 
 <footer class="bg-gray-100 p-8 text-gray-700">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-            <img
-                src="public/apmedika-logo.png"
+            <Image
+                src={`${IMAGE_URL}/${company?.logo_footer}`}
                 alt="Apmedika Logo"
                 class="mb-4 h-16"
+                loading="lazy"
+                decoding="async"
+                height={50}
+                width={50}
+                style="max-width: 100px; max-height: 100px;"
             />
             <p class="text-justify">
                 <b>APM (Apmedika)</b> provides high-quality, affordable treatment.
@@ -30,31 +54,36 @@ import { Icon } from "astro-icon/components";
         <div>
             <h3 class="font-bold mb-4">Useful Links</h3>
             <ul class="space-y-2">
-                <li><a href="#" class="hover:underline">News</a></li>
+                <li><a href="/news?page=1" class="hover:underline">News</a></li>
             </ul>
         </div>
         <div>
-            <h3 class="font-bold mb-4">Healthcare Products</h3>
+            <h3 class="font-bold mb-4">Medical Speciality Care</h3>
             <ul class="space-y-2">
-                <li><a href="#" class="hover:underline">Rehabilitation</a></li>
-                <li>
-                    <a href="#" class="hover:underline">Laboratory Analysis</a>
-                </li>
-                <li>
-                    <a href="#" class="hover:underline">Face Lift Surgery</a>
-                </li>
-                <li><a href="#" class="hover:underline">Inspection</a></li>
+                {
+                    categories?.map((category) => (
+                        <li>
+                            <a
+                                href={`/products/${category.id}`}
+                                class="hover:underline"
+                            >
+                                {category.name}
+                            </a>
+                        </li>
+                    ))
+                }
             </ul>
         </div>
         <div class="space-y-4">
             <h3 class="font-bold mb-4">Contacts</h3>
             <p>
-                <strong>Address:</strong> Komp. Ruko Cempaka Mas No 29, Jl. Letjend.
-                Suprapto, Jakarta Pusat, DKI Jakarta 10640, Indonesia
+                <strong>Address:</strong>
+                {company?.address}
             </p>
-            <p><strong>Email:</strong> info@aprimedik.com</p>
+            <p><strong>Email:</strong> {company?.email_address}</p>
             <p>
-                <strong>Phone:</strong> +62 21 565 2365
+                <strong>Phone:</strong>
+                {company?.phone_number}
             </p>
         </div>
     </div>

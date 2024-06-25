@@ -1,10 +1,15 @@
 ---
 import Layouts from "@layouts/Layouts.astro";
 import InputComponent from "@components/input/InputComponent.jsx";
+import { SEO } from "astro-seo";
 ---
 
 <Layouts title="products">
     <main class="p-8">
+        <SEO
+            title="APM Medical Tools - High Quality Medical Devices"
+            description="Search and explore our extensive catalog of high-quality medical tools and devices. Find the best solutions tailored to your medical needs."
+        />
         <section id="product-search" class="mb-8">
             <InputComponent client:load params={Astro.params} />
         </section>

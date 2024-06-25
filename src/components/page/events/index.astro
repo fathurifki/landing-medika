@@ -6,10 +6,6 @@ const { eventCategory, event, IMAGE_URL } = Astro.props;
 
 <section class="p-8">
     <h2 class="text-3xl font-bold mb-4">View our gallery</h2>
-    <p class="mb-6 text-gray-700">
-        Discover our comprehensive gallery featuring the best moments from our medical showcases. 
-        From groundbreaking innovations to expert presentations, delve into the visual highlights of our events.
-    </p>
     <nav class="mb-6">
         <ul class="flex space-x-4">
             {
@@ -27,19 +23,23 @@ const { eventCategory, event, IMAGE_URL } = Astro.props;
         </ul>
     </nav>
 
-    <div
-        class="gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-scroll"
-    >
+    <div>
         {
             event?.map((event) => (
-                <Image
-                    src={`${IMAGE_URL}/${event.event_image}`}
-                    height={200}
-                    width={200}
-                    alt="Gallery Image 1"
-                    class="w-full h-72 rounded shadow"
-                    style="max-height: 300px; max-width: 300px;"
-                />
+                <div>
+                    <span class="text-md mb-6" style="text-align: justify;">{event?.event_description}</span>
+                    <div class="gallery grid grid-cols-1 mt-6 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-scroll md:mt-6">
+                        <Image
+                            src={`${IMAGE_URL}/${event.event_image}`}
+                            height={200}
+                            width={200}
+                            alt="Gallery Image 1"
+                            class="w-full h-72 rounded shadow"
+                            style="max-height: 300px; max-width: 300px;"
+                            loading="lazy"
+                        />
+                    </div>
+                </div>
             ))
         }
     </div>
