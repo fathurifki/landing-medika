@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import DOMPurify from 'isomorphic-dompurify';
 import styles from "./detail.module.css"
-import { loadEnv } from "vite";
-
-const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
 
 const DetailPage = ({ ...props }) => {
-    const API_URL = VITE_API_URL;
-    const IMAGE_URL = VITE_IMAGE_URL;
+    const API_URL = import.meta.env.PUBLIC_API;
+    const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
 
     const [images, setImages] = useState([]);
     const [video, setVideo] = useState({});
