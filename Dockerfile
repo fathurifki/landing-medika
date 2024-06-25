@@ -11,7 +11,7 @@ COPY . .
 FROM base AS build
 RUN yarn build
 
-# Final stage
+FROM node:alpine3.19 AS final
 WORKDIR /app
 
 COPY --from=base /app/node_modules ./node_modules
