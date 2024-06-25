@@ -1,17 +1,23 @@
 ---
 title: "Welcome to My Landing Page";
 layout: "../layouts/BaseLayout.astro";
+import { loadEnv } from "vite";
 import { Image, Picture } from "astro:assets";
 import Newscard from "@components/newscard/newscard.astro";
 import Layouts from "@layouts/Layouts.astro";
 import "keen-slider/keen-slider.min.css";
 
 const API_URL = import.meta.env.PUBLIC_API;
+console.log("🚀 ~ API_URL:", API_URL)
 const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
+console.log("🚀 ~ VITE_IMAGE_URL:", VITE_IMAGE_URL)
+console.log("🚀 ~ VITE_API_URL:", VITE_API_URL)
 
 async function fetchData(): Promise<{ blogData: any[] } | undefined> {
   try {
-    const response = await fetch(`${API_URL}/items/Blog`);
+    const response = await fetch(`${VITE_API_URL}/items/Blog`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -26,7 +32,7 @@ async function fetchData(): Promise<{ blogData: any[] } | undefined> {
 
 async function fetchCatalog(): Promise<{ catalogData: any[] } | undefined> {
   try {
-    const response = await fetch(`${API_URL}/items/Catalog`);
+    const response = await fetch(`${VITE_API_URL}/items/Catalog`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -41,7 +47,7 @@ async function fetchCatalog(): Promise<{ catalogData: any[] } | undefined> {
 
 async function fetchPartner(): Promise<{ partnerData: any[] } | undefined> {
   try {
-    const response = await fetch(`${API_URL}/items/partners`);
+    const response = await fetch(`${VITE_API_URL}/items/partners`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -56,7 +62,7 @@ async function fetchPartner(): Promise<{ partnerData: any[] } | undefined> {
 
 async function fetchMedical(): Promise<{ medicalData: any[] } | undefined> {
   try {
-    const response = await fetch(`${API_URL}/items/medical_specialty`);
+    const response = await fetch(`${VITE_API_URL}/items/medical_specialty`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -185,7 +191,7 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
               >
                 <a href={`/product-detail/${slide?.uuid}`}>
                   <Image
-                    src={`${IMAGE_URL}/${slide?.product_image}`}
+                    src={`${VITE_IMAGE_URL}/${slide?.product_image}`}
                     alt={slide?.name}
                     width={250}
                     height={250}
@@ -229,7 +235,7 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
             partnerData?.slice(0, 8).map((item) => (
               <div class="flex justify-center items-center">
                 <Image
-                  src={`${IMAGE_URL}/${item.logos}`}
+                  src={`${VITE_IMAGE_URL}/${item.logos}`}
                   alt={item.name}
                   loading="lazy"
                   height={100}
@@ -257,7 +263,7 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
                   (item) =>
                     item?.status === "published" && (
                       <Newscard
-                        imgSrc={`${IMAGE_URL}/${item?.Banner}`}
+                        imgSrc={`${VITE_IMAGE_URL}/${item?.Banner}`}
                         imgAlt={item?.Title}
                         title={item?.Title}
                         description={item?.Content}

@@ -9,13 +9,16 @@ import {
 } from "astro-navbar";
 import { Icon } from "astro-icon/components";
 import { Image } from "astro:assets";
+import { loadEnv } from "vite";
 
 const API_URL = import.meta.env.PUBLIC_API;
 const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
 
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
+
 async function getNavbar() {
-    const response = await fetch(`${API_URL}/items/Catalog?limit=10`);
-    const category = await fetch(`${API_URL}/items/category_product`);
+    const response = await fetch(`${VITE_API_URL}/items/Catalog?limit=10`);
+    const category = await fetch(`${VITE_API_URL}/items/category_product`);
     const data = await response.json();
     const categoryData = await category.json();
     return {
@@ -25,7 +28,7 @@ async function getNavbar() {
 }
 
 const fetchCompany = async () => {
-    const response = await fetch(`${API_URL}/items/Company`);
+    const response = await fetch(`${VITE_API_URL}/items/Company`);
     const data = await response.json();
     return data.data;
 };
@@ -61,7 +64,7 @@ const company = await fetchCompany();
         <div class="flex justify-between p-2">
             <a href="/">
                 <Image
-                    src={`${IMAGE_URL}/${company?.logo_navbar}`}
+                    src={`${VITE_IMAGE_URL}/${company?.logo_navbar}`}
                     width={200}
                     height={200}
                     alt="My Landing Page"
