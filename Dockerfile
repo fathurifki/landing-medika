@@ -8,8 +8,6 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
-ENV PUBLIC_API=${PUBLIC_API}
-
 RUN yarn install
 RUN yarn build
 
