@@ -80,15 +80,15 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
     <section
       id="home"
       class="bg-cover bg-center text-white p-8 h-96 md:h-[500px]"
-      style="background-image: url('https://aprimedik.com/assets/img/hero/banner_07.jpg');"
+      style="background-image: url('/public/bg.jpg');"
     >
       <div
         class="container h-full flex flex-col text-center justify-center items-center mx-auto md:flex md:flex-col md:justify-center md:items-start"
       >
-        <h1 class="text-4xl font-bold mb-4 text-[#C42425]">
+        <h1 class="text-4xl font-bold mb-4 text-white">
           Indonesia's Premier Healthcare Partner
         </h1>
-        <p class="text-lg text-[#026294] font-bold">
+        <p class="text-lg text-white font-bold">
           Your trusted partner in medical device solutions
         </p>
       </div>
@@ -98,19 +98,42 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
       <div class="container mx-auto">
         <h2 class="text-3xl font-bold mb-6">About Us</h2>
         <p class="mb-6 text-lg leading-relaxed">
-          APM philosophy is to make every patient deserve get high quality yet
-          affordable treatment with world class product from Europe and Asia.
+          Anugerah Prima Medika (APM) embraces the motto “Your Trusted Partner
+          in Medical Device Solutions” and operates primarily in Indonesia. We
+          specialize in partnerships with distributors, project owners, and
+          hospitals. APM manages its own local medical device brands and acts as
+          the sole agent for international medical manufacturers. Our clients
+          mainly include hospitals, clinics, and other healthcare facilities.
         </p>
         <p class="mb-6 text-lg leading-relaxed">
-          We do our best to cover all Indonesia hospitals both Private and
-          Government and involve association for educate doctor and nurses using
-          our product, make better patient treatment.
+          <b>Product Development and Innovation:</b> We develop both local and global
+          high-quality medical devices tailored to the needs of our partners and
+          customers.
         </p>
         <p class="mb-6 text-lg leading-relaxed">
-          Service is our key point with 24/7 on call service because we
-          understand that every patient must get non-stop treatment and our
-          device must function flawlessly all time. Our team always ready to
-          serve and provide only the best for you.
+          <b>Partnerships and Collaborations:</b> We form strategic alliances with
+          companies, research institutions, and healthcare providers to expand our
+          product range and stimulate innovation through joint research and development.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Sales and Distribution Channels:</b> Our sales approach focuses on building
+          relationships with healthcare decision-makers. We sell our products directly
+          to end-users or through distributors.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Marketing and Branding:</b> Our marketing efforts highlight the clinical
+          advantages, dependability, and affordability of our products. We engage
+          in medical events, exhibitions, webinars, and direct outreach to promote
+          our devices.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Service and Support:</b> We offer extensive after-sales services including
+          training, maintenance, and repairs, accessible 24/7 via our hotline (+62-811-8708-078).
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Customization and Flexibility:</b> We provide tailored solutions to
+          meet the diverse needs of our healthcare partners, including custom features
+          and integrations.
         </p>
       </div>
     </section>
@@ -160,16 +183,18 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
                 data-key={slide.uuid}
                 style="flex: 0 0 auto; width: 250px;"
               >
-                <Image
-                  src={`${IMAGE_URL}/${slide?.product_image}`}
-                  alt={slide?.name}
-                  width={250}
-                  height={250}
-                  class="w-full h-auto rounded-lg mb-4 object-contain"
-                  style="max-width: 250px; max-height: 250px;"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <a href={`/product-detail/${slide?.uuid}`}>
+                  <Image
+                    src={`${IMAGE_URL}/${slide?.product_image}`}
+                    alt={slide?.name}
+                    width={250}
+                    height={250}
+                    class="w-full h-auto rounded-lg mb-4 object-contain"
+                    style="max-width: 250px; max-height: 250px;"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
               </div>
             ))
           }
@@ -177,7 +202,7 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
       </div>
     </section>
 
-    <section id="about" class="bg-gray-100 p-8 h-auto md:h-[400px]">
+    <section id="about" class="p-8 h-auto md:h-[400px]">
       <div
         class="container mx-auto flex flex-col md:flex-row items-center justify-between"
       >

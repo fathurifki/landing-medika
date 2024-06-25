@@ -141,18 +141,35 @@ const InputComponent = ({ ...props }) => {
                 </section>
             )}
 
-            <section id="pagination" class="flex justify-center space-x-4 mt-8">
+            <section id="pagination" className="flex justify-center space-x-4 mt-8">
                 <button
-                    class="p-2 border border-gray-300 rounded"
-                    onClick={() => setSearchTerm({ ...searchTerm, page: searchTerm.page - 1 })}
+                    className="p-2 rounded block text-center flex items-center"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setSearchTerm({ ...searchTerm, page: searchTerm.page - 1 });
+                    }}
+                    disabled={searchTerm.page <= 1}
+                    style={{ opacity: searchTerm.page <= 1 ? '0.5' : '1' }}
                 >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="m14 18l-6-6l6-6l1.4 1.4l-4.6 4.6l4.6 4.6z" />
+                    </svg>
                     Previous
                 </button>
+
                 <button
-                    class="p-2 border border-gray-300 rounded"
-                    onClick={() => setSearchTerm({ ...searchTerm, page: searchTerm.page + 1 })}
+                    className="p-2 rounded block text-center flex items-center"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setSearchTerm({ ...searchTerm, page: searchTerm.page + 1 });
+                    }}
+                    disabled={!products?.length}
+                    style={{ opacity: !products?.length ? '0.5' : '1' }}
                 >
                     Next
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12.6 12L8 7.4L9.4 6l6 6l-6 6L8 16.6z" />
+                    </svg>
                 </button>
             </section>
         </div>

@@ -11,9 +11,6 @@ export default defineConfig({
     })],
     compressHTML: true,
     output: 'server',
-    security: {
-        checkOrigin: true
-    },
     adapter: node({
         mode: "standalone"
     }),
