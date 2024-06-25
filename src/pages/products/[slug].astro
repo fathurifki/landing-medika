@@ -2,10 +2,14 @@
 import Layouts from "@layouts/Layouts.astro";
 import { Image } from "astro:assets";
 import React, { useState, useEffect } from "react";
+import { loadEnv } from "vite";
+
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
 
 import InputComponent from "@components/input/InputComponent.jsx";
-const API_URL = import.meta.env.PUBLIC_API;
-const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+
+const API_URL = VITE_API_URL;
+const IMAGE_URL = VITE_IMAGE_URL;
 
 interface CatalogItem {
     uuid: number;

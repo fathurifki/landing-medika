@@ -8,7 +8,6 @@ import Layouts from "@layouts/Layouts.astro";
 import "keen-slider/keen-slider.min.css";
 
 const API_URL = import.meta.env.PUBLIC_API;
-console.log("🚀 ~ API_URL:", API_URL)
 const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
 
 const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
