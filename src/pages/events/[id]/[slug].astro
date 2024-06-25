@@ -40,7 +40,7 @@ async function getEvent({ event_slug }) {
         event: event?.data,
     };
 }
-const { slug, id } = Astro.params;
+const { id } = Astro?.params;
 const { event } = await getEvent({ event_slug: id });
 const { eventCategory } = await getCategory({ params: {} });
 ---
