@@ -19,7 +19,7 @@ const InputComponent = ({ ...props }) => {
     const [categories, setCategories] = useState([]);
 
     const fetchCategory = async () => {
-        const response = await fetch(`${API_URL}/items/category_product`);
+        const response = await fetch(`${props.API_URL}/items/category_product`);
         const data = await response.json();
         setCategories(data.data);
     }
@@ -120,7 +120,7 @@ const InputComponent = ({ ...props }) => {
                                         <div class="mb-4">
                                             <a href={`/product-detail/${product?.uuid}`}>
                                                 <img
-                                                    src={`${IMAGE_URL}/${product?.product_image}`}
+                                                    src={`${props.IMAGE_URL}/${product?.product_image}`}
                                                     alt={product?.name}
                                                     width={300}
                                                     height={300}
