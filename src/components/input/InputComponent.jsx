@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from 'react';
 
+const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+};
+
+
 const InputComponent = ({ ...props }) => {
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState({
@@ -27,12 +44,18 @@ const InputComponent = ({ ...props }) => {
             let url;
 
             let filterObject = {};
-            if (filters.name !== "") {
+            console.log("🚀 ~ fetchData ~ filterObject:", filterObject)
+            if (filters.name !== "" && Object.keys(filters.category).length === 0) {
                 filterObject.name = { _eq: filters.name };
             }
 
-            if (filters.category !== "") {
+            if (Object.keys(filters.category).length !== 0) {
                 filterObject.category = { _eq: filters.category };
+            }
+
+            if (Object.keys(filters.category).length !== 0 && filters.name !== "") {
+                filterObject.category = { _eq: filters.category };
+                filterObject.name = { _eq: filters.name };
             }
 
             if (filters.name === "" && Object.keys(filters.category).length === 0) {
@@ -65,10 +88,12 @@ const InputComponent = ({ ...props }) => {
         fetchCategory();
     }, []);
 
+    const name = useDebounce(searchTerm.name._eq, 600);
+
     useEffect(() => {
         const selectedCategory = category !== "" ? category : props.params;
-        fetchData({ name: searchTerm.name._eq, category: selectedCategory });
-    }, [searchTerm.name._eq, category, searchTerm.page, searchTerm.limit, props.params]);
+        fetchData({ name: name, category: selectedCategory });
+    }, [name, category, searchTerm.page, searchTerm.limit, props.params]);
 
     return (
         <div>
