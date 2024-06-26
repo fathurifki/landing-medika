@@ -10,6 +10,7 @@ const InputComponent = ({ ...props }) => {
         page: 1,
         limit: 10
     });
+
     const [category, setCategory] = useState(props.params || '');
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);

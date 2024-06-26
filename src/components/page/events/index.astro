@@ -14,7 +14,7 @@ const { eventCategory, event, IMAGE_URL } = Astro.props;
                             href={`/events/${event?.id}/${event.enter_slugs}`}
                             class="text-blue-500 hover:underline"
                         >
-                            {event.name_events}
+                            {event?.name_events}
                         </a>
                     </li>
                 ))

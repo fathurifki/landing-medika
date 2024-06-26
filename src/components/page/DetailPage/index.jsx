@@ -3,33 +3,35 @@ import DOMPurify from 'isomorphic-dompurify';
 import styles from "./detail.module.css"
 
 const DetailPage = ({ ...props }) => {
-    const API_URL = import.meta.env.PUBLIC_API;
-    const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
 
     const [images, setImages] = useState([]);
     const [video, setVideo] = useState({});
     const [mainMedia, setMainMedia] = useState({ src: "", type: "image" });
     const [product, setProduct] = useState({});
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch(`${API_URL}/items/Catalog/${props.slug}`);
+                const response = await fetch(`${props.API_URL}/items/Catalog/${props.slug}`);
                 const data = await response.json();
                 const catalogProduct = data?.data;
 
                 const fetchedImages = [
-                    { src: `${IMAGE_URL}/${catalogProduct?.product_image}`, alt: `${catalogProduct?.name}` },
+                    { 
+                        src: catalogProduct?.product_image ? `${props.IMAGE_URL}/${catalogProduct.product_image}` : "", 
+                        alt: catalogProduct?.name ? `${catalogProduct.name}` : "" 
+                    },
                     {
-                        src: `${IMAGE_URL}/${catalogProduct?.additional_image}`,
-                        alt: `additional ${catalogProduct?.name}`,
+                        src: catalogProduct?.additional_image ? `${props.IMAGE_URL}/${catalogProduct.additional_image}` : "", 
+                        alt: catalogProduct?.name ? `additional ${catalogProduct.name}` : "" 
                     },
                 ];
 
                 const fetchedVideo = {
                     id: "video",
-                    src: `${IMAGE_URL}/${catalogProduct?.product_video}`,
-                    thumbnail: `${IMAGE_URL}/${catalogProduct?.product_image}`,
+                    src: `${props.IMAGE_URL}/${catalogProduct?.product_video}`,
+                    thumbnail: `${props.IMAGE_URL}/${catalogProduct?.product_image}`,
                     alt: "Video Thumbnail",
                 };
 
@@ -39,11 +41,13 @@ const DetailPage = ({ ...props }) => {
                 setMainMedia({ src: fetchedImages[0].src, type: "image" });
             } catch (error) {
                 console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
             }
         }
 
         fetchData();
-    }, []);
+    }, [props.slug]);
 
     const handleMediaClick = (src, type) => {
         setMainMedia({ src, type });
@@ -61,7 +65,7 @@ const DetailPage = ({ ...props }) => {
                             className="w-full flex md:w-1/4 bg-white border-r overflow-x-auto md:overflow-auto md:flex-col"
                         >
                             {
-                                images.map((image, index) => (
+                                images?.map((image, index) => (
                                     <div key={index} className="p-2 cursor-pointer hover:bg-gray-200" onClick={() => handleMediaClick(image.src, "image")}>
                                         <img
                                             src={image.src}
@@ -127,9 +131,9 @@ const DetailPage = ({ ...props }) => {
                 <div>
                     <span className="text-2xl font-bold mb-6">Specifications</span>
                     <div className="flex flex-col">
-                        <p>Name: {product.name}</p>
+                        <p>Name: {product?.name}</p>
                         <p>Description:</p>
-                        <div className={styles.description} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.Description) }} />
+                        <div className={styles.description} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product?.Description) }} />
                     </div>
                 </div>
             </section>

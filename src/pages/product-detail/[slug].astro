@@ -2,10 +2,16 @@
 import Layouts from "@layouts/Layouts.astro";
 import DetailPage from "@components/page/DetailPage/index.jsx";
 const { slug } = Astro.params;
+import { loadEnv } from "vite";
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(
+    process.env.NODE_ENV || "",
+    process.cwd(),
+    "",
+);
 ---
 
 <Layouts title="products">
     <main class="p-8">
-        <DetailPage client:load slug={slug} />
+        <DetailPage client:load slug={slug} API_URL={VITE_API_URL} IMAGE_URL={VITE_IMAGE_URL} />
     </main>
 </Layouts>

@@ -7,12 +7,7 @@ import Newscard from "@components/newscard/newscard.astro";
 import Layouts from "@layouts/Layouts.astro";
 import "keen-slider/keen-slider.min.css";
 
-const API_URL = import.meta.env.PUBLIC_API;
-const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
-
 const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
-console.log("🚀 ~ VITE_IMAGE_URL:", VITE_IMAGE_URL)
-console.log("🚀 ~ VITE_API_URL:", VITE_API_URL)
 
 async function fetchData(): Promise<{ blogData: any[] } | undefined> {
   try {
@@ -85,7 +80,7 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
     <section
       id="home"
       class="bg-cover bg-center text-white p-8 h-96 md:h-[500px]"
-      style="background-image: url('/bg.jpg');"
+      style="background-image: url('/bg.webp');"
       >
       <div
         class="container h-full flex flex-col text-center justify-center items-center mx-auto md:flex md:flex-col md:justify-center md:items-start"
@@ -407,51 +402,12 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
 </script>
 
 <style>
-  .keen-slider__slide {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .keen-slider__slide img {
-    max-width: 100%;
-    border-radius: 8px;
-  }
-
-  .keen-slider__slide h3 {
-    margin-top: 10px;
-    font-size: 1.2rem;
-    text-align: center;
-  }
-
-  .faq-section {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .faq-item {
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-    overflow: hidden;
-  }
-  .faq-question {
-    background: #f9f9f9;
-    padding: 1rem;
-    width: 100%;
-    text-align: left;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .faq-answer {
-    display: none;
-    padding: 1rem;
-    background: #fff;
-  }
-  .faq-question.active + .faq-answer {
-    display: block;
-  }
+  .keen-slider__slide{display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .keen-slider__slide img{max-width:100%;border-radius:8px}
+  .keen-slider__slide h3{margin-top:10px;font-size:1.2rem;text-align:center}
+  .faq-section{display:flex;flex-direction:column;gap:1rem}
+  .faq-item{border:1px solid #ccc;border-radius:0.5rem;overflow:hidden}
+  .faq-question{background:#f9f9f9;padding:1rem;width:100%;text-align:left;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+  .faq-answer{display:none;padding:1rem;background:#fff}
+  .faq-question.active + .faq-answer{display:block}
 </style>
