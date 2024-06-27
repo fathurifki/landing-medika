@@ -7,7 +7,11 @@ import Newscard from "@components/newscard/newscard.astro";
 import Layouts from "@layouts/Layouts.astro";
 import "keen-slider/keen-slider.min.css";
 
-const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(
+  process.env.NODE_ENV || "",
+  process.cwd(),
+  "",
+);
 
 async function fetchData(): Promise<{ blogData: any[] } | undefined> {
   try {
@@ -81,7 +85,7 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
       id="home"
       class="bg-cover bg-center text-white p-8 h-96 md:h-[500px]"
       style="background-image: url('/bg.webp');"
-      >
+    >
       <div
         class="container h-full flex flex-col text-center justify-center items-center mx-auto md:flex md:flex-col md:justify-center md:items-start"
       >
@@ -139,35 +143,39 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
     </section>
 
     <section id="products" class="p-8 h-auto overflow-x-auto">
-      <div class="container mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Medical Speciality Care</h2>
-        <div class="faq-section">
+      <h2 class="text-2xl font-bold mb-4">Medical Speciality Care</h2>
+      <div class="container mx-auto mt-10">
+        <div class="grid grid-cols-2 gap-4">
           {
-            medicalData?.map((item) => (
-              <div class="faq-item">
-                <button class="faq-question">
-                  <b>{item.title}</b>
-                  <span class="faq-toggle">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </span>
-                </button>
-                <div class="faq-answer" set:html={item.description} />
+            medicalData?.slice(0, 4)?.map((item) => (
+              <div class="h-48 rounded-lg relative bg-cover bg-center filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out">
+                <Image height={48} width={48} src={`${VITE_IMAGE_URL}/${item.image}`} alt={item.title} class="absolute inset-0 w-full h-full object-cover rounded-lg" />
+                <div class="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
+                <div class="relative z-10 p-6">
+                  <span class="text-white text-xl">{item.title}</span>
+                  <div class="text-white text-base mt-2" set:html={item?.description} />
+                  <div class="mt-2 text-white font-bold hover:font-extrabold">
+                    <a href={`/product-detail/${item.id}`} >Explore More</a>
+                  </div>
+                </div>
               </div>
             ))
           }
+        </div>
+        <div class="grid grid-cols-1 mt-4">
+          <div class="flex justify-center">
+            <div class="h-40 w-[500px] rounded-lg relative bg-cover bg-center transition-all duration-500 ease-in-out">
+              <Image height={40} width={500} src={`${VITE_IMAGE_URL}/${medicalData[4].image}`} alt={medicalData[4].title} class="absolute inset-0 w-full h-full object-cover rounded-lg" />
+              <div class="absolute inset-0 bg-black opacity-50 rounded-lg transition-opacity duration-500 ease-in-out hover:opacity-0"></div>
+              <div class="relative z-10 p-4 text-white">
+                <span class="block text-lg">{medicalData[4].title}</span>
+                <div set:html={medicalData[4]?.description} />
+                <div class="mt-2 text-white font-bold hover:font-extrabold">
+                  <a href={`/product-detail/${medicalData[4].id}`} >Explore More</a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -402,12 +410,48 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
 </script>
 
 <style>
-  .keen-slider__slide{display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .keen-slider__slide img{max-width:100%;border-radius:8px}
-  .keen-slider__slide h3{margin-top:10px;font-size:1.2rem;text-align:center}
-  .faq-section{display:flex;flex-direction:column;gap:1rem}
-  .faq-item{border:1px solid #ccc;border-radius:0.5rem;overflow:hidden}
-  .faq-question{background:#f9f9f9;padding:1rem;width:100%;text-align:left;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-  .faq-answer{display:none;padding:1rem;background:#fff}
-  .faq-question.active + .faq-answer{display:block}
+  .keen-slider__slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .keen-slider__slide img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  .keen-slider__slide h3 {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  .faq-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .faq-item {
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  .faq-question {
+    background: #f9f9f9;
+    padding: 1rem;
+    width: 100%;
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-answer {
+    display: none;
+    padding: 1rem;
+    background: #fff;
+  }
+  .faq-question.active + .faq-answer {
+    display: block;
+  }
 </style>

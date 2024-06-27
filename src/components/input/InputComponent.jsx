@@ -44,7 +44,6 @@ const InputComponent = ({ ...props }) => {
             let url;
 
             let filterObject = {};
-            console.log("🚀 ~ fetchData ~ filterObject:", filterObject)
             if (filters.name !== "" && Object.keys(filters.category).length === 0) {
                 filterObject.name = { _eq: filters.name };
             }
