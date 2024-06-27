@@ -61,12 +61,15 @@ async function fetchPartner(): Promise<{ partnerData: any[] } | undefined> {
 async function fetchMedical(): Promise<{ medicalData: any[] } | undefined> {
   try {
     const response = await fetch(`${VITE_API_URL}/items/medical_specialty`);
+    const category = await fetch(`${VITE_API_URL}/items/category_product`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    const categoryData = await category.json();
     return {
       medicalData: data?.data || [],
+      category: categoryData?.data || []
     };
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -76,7 +79,18 @@ async function fetchMedical(): Promise<{ medicalData: any[] } | undefined> {
 const { blogData } = (await fetchData()) ?? { blogData: [] };
 const { catalogData } = (await fetchCatalog()) ?? { catalogData: [] };
 const { partnerData } = (await fetchPartner()) ?? { partnerData: [] };
-const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
+const { medicalData, category } = (await fetchMedical()) ?? { medicalData: [] };
+
+const mappingData = medicalData.map((item) => {
+  const categoryItem = category.find((categoryItem) => item.title === categoryItem.name);
+  if (categoryItem) {
+    return {
+      ...item,
+      id: categoryItem.id
+    };
+  }
+  return item;
+});
 ---
 
 <Layouts title="Home">
@@ -147,18 +161,18 @@ const { medicalData } = (await fetchMedical()) ?? { medicalData: [] };
       <div class="container mx-auto mt-10">
         <div class="grid grid-cols-2 gap-4">
           {
-            medicalData?.slice(0, 4)?.map((item) => (
-              <div class="h-48 rounded-lg relative bg-cover bg-center filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out">
-                <Image height={48} width={48} src={`${VITE_IMAGE_URL}/${item.image}`} alt={item.title} class="absolute inset-0 w-full h-full object-cover rounded-lg" />
-                <div class="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
-                <div class="relative z-10 p-6">
-                  <span class="text-white text-xl">{item.title}</span>
-                  <div class="text-white text-base mt-2" set:html={item?.description} />
-                  <div class="mt-2 text-white font-bold hover:font-extrabold">
-                    <a href={`/product-detail/${item.id}`} >Explore More</a>
+            mappingData?.slice(0, 4)?.map((item, index) => (
+                <div class="h-48 rounded-lg relative bg-cover bg-center filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out">
+                  <Image height={48} width={48} src={`${VITE_IMAGE_URL}/${item.image}`} alt={item.title} class="absolute inset-0 w-full h-full object-cover rounded-lg" />
+                  <div class="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
+                  <div class="relative z-10 p-6">
+                    <span class="text-white text-xl">{item.title}</span>
+                    <div class="text-white text-base mt-2" set:html={item?.description} />
+                    <div class="mt-2 text-white font-bold hover:font-extrabold">
+                      <a href={`/products/${item.id}`} >Explore More</a>
+                    </div>
                   </div>
                 </div>
-              </div>
             ))
           }
         </div>
