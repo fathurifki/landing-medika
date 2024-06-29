@@ -11,10 +11,14 @@ import { Icon } from "astro-icon/components";
 import { Image } from "astro:assets";
 import { loadEnv } from "vite";
 
-const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(
+    process.env.NODE_ENV || "",
+    process.cwd(),
+    "",
+);
 
 async function getNavbar() {
-    const response = await fetch(`${VITE_API_URL}/items/Catalog?limit=10`);
+    const response = await fetch(`${VITE_API_URL}/items/sub_category`);
     const category = await fetch(`${VITE_API_URL}/items/category_product`);
     const data = await response.json();
     const categoryData = await category.json();
@@ -40,9 +44,7 @@ const company = await fetchCompany();
     <div class="flex flex-col md:flex-row md:items-center">
         <span class="flex items-center mb-2 md:mb-0 md:mr-4">
             <Icon name="mdi:map-marker" class="mr-2 text-red-500" />
-            <span class="font-semibold"
-                >{company?.address}</span
-            >
+            <span class="font-semibold">{company?.address}</span>
         </span>
         <span class="flex items-center">
             <Icon name="mdi:email-outline" class="mr-2 text-blue-500" />
@@ -79,6 +81,19 @@ const company = await fetchCompany();
             <ul
                 class="flex flex-col lg:flex-row lg:items-center lg:justify-end lg:space-x-4 h-full text-right"
             >
+                <li class="mb-2 lg:mb-0 lg:hidden">
+                    <a href="/" class="hover:underline text-white font-bold"
+                        >Home</a
+                    >
+                </li>
+                <li class="mb-0 hidden lg:block">
+                    <a
+                        href="/"
+                        class="flex justify-center items-center text-white"
+                    >
+                        <Icon name="mdi:home" class="text-lg" />
+                    </a>
+                </li>
                 <li class="mb-2 lg:mb-0">
                     <Dropdown class="group">
                         <button class="content">
@@ -96,8 +111,44 @@ const company = await fetchCompany();
                                     catalog?.map((item) => (
                                         <li data-key={item?.id}>
                                             <a
-                                                href={`/products/${item?.slugs}`}
+                                                href={`/products?sub=${item?.id}`}
                                                 class="hover:underline text-left"
+                                            >
+                                                {item?.sub_category}
+                                            </a>
+                                        </li>
+                                    ))
+                                }
+                                <li>
+                                    <a
+                                        href="/products"
+                                        class="hover:underline text-left font-bold"
+                                        >Explore More...</a
+                                    >
+                                </li>
+                            </ul>
+                        </DropdownItems>
+                    </Dropdown>
+                </li>
+                <li class="mb-2 lg:mb-0">
+                    <Dropdown class="group">
+                        <button class="content">
+                            <span class="text-white font-bold"
+                                >Medical Speciality Care</span
+                            >
+                        </button>
+                        <DropdownItems
+                            class="hidden group-focus:block absolute bg-white shadow-lg rounded-md mt-2 z-30"
+                        >
+                            <ul
+                                class="grid grid-cols-2 gap-4 p-4 text-right lg:text-left"
+                            >
+                                {
+                                    category?.map((item) => (
+                                        <li data-key={item?.id}>
+                                            <a
+                                                href={`/products/${item?.id}`}
+                                                class="hover:underline text-left md:text-right"
                                             >
                                                 {item?.name}
                                             </a>
@@ -108,42 +159,10 @@ const company = await fetchCompany();
                                     <a
                                         href="/products"
                                         class="hover:underline text-left font-bold"
-                                        >More...</a
+                                        >Explore More...</a
                                     >
                                 </li>
                             </ul>
-                        </DropdownItems>
-                    </Dropdown>
-                </li>
-                <li class="mb-2 lg:mb-0">
-                    <Dropdown class="group relative">
-                        <button class="flex item">
-                            <span
-                                class="text-white font-bold text-left md:text-right"
-                                >Medical Speciality Care</span
-                            >
-                        </button>
-                        <DropdownItems
-                            class="hidden group-focus:block absolute bg-white shadow-lg rounded-md mt-2 z-30"
-                        >
-                            <DropdownSubmenu>
-                                <ul
-                                    class="flex flex-col space-y-2 p-4 text-right lg:text-left"
-                                >
-                                    {
-                                        category?.map((item) => (
-                                            <li>
-                                                <a
-                                                    href={`/products/${item?.id}`}
-                                                    class="hover:underline text-left md:text-right"
-                                                >
-                                                    {item?.name}
-                                                </a>
-                                            </li>
-                                        ))
-                                    }
-                                </ul>
-                            </DropdownSubmenu>
                         </DropdownItems>
                     </Dropdown>
                 </li>

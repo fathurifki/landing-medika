@@ -3,7 +3,11 @@ import Layouts from "@layouts/Layouts.astro";
 import EventGallery from "@components/page/events/index.astro";
 import { loadEnv } from "vite";
 
-const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(
+    process.env.NODE_ENV || "",
+    process.cwd(),
+    "",
+);
 
 const API_URL = VITE_API_URL;
 const IMAGE_URL = VITE_IMAGE_URL;
@@ -30,9 +34,20 @@ async function getEvent({ event_slug }) {
         event: event?.data,
     };
 }
+
+async function getEventDetail({ event_slug }) {
+    const newUrlParam = `${API_URL}/items/event_types/${event_slug}`;
+    const response = await fetch(newUrlParam);
+    const event = await response.json();
+    return {
+        eventDetail: event?.data,
+    };
+}
+
 const { slug, id } = Astro.params;
 const { event } = await getEvent({ event_slug: id });
 const { eventCategory } = await getCategory({ params: {} });
+const { eventDetail } = await getEventDetail({ event_slug: id });
 ---
 
 <Layouts title="Events">
@@ -40,5 +55,6 @@ const { eventCategory } = await getCategory({ params: {} });
         eventCategory={eventCategory}
         event={event}
         IMAGE_URL={IMAGE_URL}
+        eventDetail={eventDetail}
     />
 </Layouts>

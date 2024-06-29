@@ -29,13 +29,21 @@ const InputComponent = ({ ...props }) => {
     });
 
     const [category, setCategory] = useState(props.params || '');
+    const [subCategory, setSubCategory] = useState('');
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);
+    const [subCategories, setSubCategories] = useState([]);
 
     const fetchCategory = async () => {
         const response = await fetch(`${props.API_URL}/items/category_product`);
         const data = await response.json();
         setCategories(data.data);
+    }
+
+    const fetchSubCategory = async () => {
+        const response = await fetch(`${props.API_URL}/items/sub_category`);
+        const data = await response.json();
+        setSubCategories(data.data);
     }
 
     const fetchData = async (filters = {}) => {
@@ -49,16 +57,26 @@ const InputComponent = ({ ...props }) => {
             }
 
             if (Object.keys(filters.category).length !== 0) {
-                filterObject.category = { _eq: filters.category };
+                filterObject.product = { _eq: filters.category };
             }
 
-            if (Object.keys(filters.category).length !== 0 && filters.name !== "") {
-                filterObject.category = { _eq: filters.category };
+            if (Object.keys(filters.category).length !== 0 && filters.name !== "" && filters.category_product === "") {
+                filterObject.product = { _eq: filters.category };
                 filterObject.name = { _eq: filters.name };
+                filterObject.sub_product = { _eq: +filters.subCategory };
             }
 
             if (filters.name === "" && Object.keys(filters.category).length === 0) {
                 filterObject = {};
+            }
+
+            if (filters.name === "" && Object.keys(filters.category).length === 0 && filters.category_product !== "") {
+                filterObject = {};
+                filterObject.sub_product = { _eq: +filters.category_product };
+            }
+
+            if (filters.category_product) {
+                filterObject.sub_product = { _eq: +filters.category_product };
             }
 
             const query = {
@@ -84,15 +102,21 @@ const InputComponent = ({ ...props }) => {
     };
 
     useEffect(() => {
+        const subCategory = props.url.searchParams.get("sub");
+        setSubCategory(subCategory);
+    }, [props.url]);
+
+    useEffect(() => {
         fetchCategory();
+        fetchSubCategory();
     }, []);
 
     const name = useDebounce(searchTerm.name._eq, 600);
 
     useEffect(() => {
         const selectedCategory = category !== "" ? category : props.params;
-        fetchData({ name: name, category: selectedCategory });
-    }, [name, category, searchTerm.page, searchTerm.limit, props.params]);
+        fetchData({ name: name, category: selectedCategory, category_product: subCategory });
+    }, [name, category, searchTerm.page, searchTerm.limit, props.params, subCategory]);
 
     return (
         <div>
@@ -118,6 +142,22 @@ const InputComponent = ({ ...props }) => {
                             <option value="">All</option>
                             {categories.map((category) => (
                                 <option value={category.id}>{category.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                    <div>
+                        <label for="sub-category" class="block mb-2">Sub Category</label>
+                        <select
+                            id="sub-category"
+                            class="w-full p-2 border border-gray-30 rounded"
+                            onChange={(e) => setSubCategory(e.target.value)}
+                            value={subCategory}
+                        >
+                            <option value="">All</option>
+                            {subCategories.map((category) => (
+                                <option value={category.id}>{category.sub_category}</option>
                             ))}
                         </select>
                     </div>

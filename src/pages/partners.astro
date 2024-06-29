@@ -33,7 +33,7 @@ const localLogo = await logo?.filter((items) => items.partnership_types === 2);
                 <h2 class="text-2xl font-bold mb-4 text-center">
                     International Partners
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                     {
                         internationalLogo?.map((item) => (
                             <div class="flex justify-center items-center relative group">
@@ -41,7 +41,7 @@ const localLogo = await logo?.filter((items) => items.partnership_types === 2);
                                     src={`${IMAGE_URL}/${item?.logos}`}
                                     alt="Partner Logo"
                                     loading="lazy"
-                                    class="w-32 h-32 mx-auto mb-4 hover:filter-none filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out object-contain"
+                                    class="w-48 h-48 mx-auto mb-4 transition-all duration-500 ease-in-out object-contain"
                                 />
                             </div>
                         ))
@@ -55,7 +55,7 @@ const localLogo = await logo?.filter((items) => items.partnership_types === 2);
                 <h2 class="text-2xl font-bold mb-4 text-center">
                     Local Partners
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                     {
                         localLogo?.map((item) => (
                             <div class="flex justify-center items-center">
@@ -63,7 +63,7 @@ const localLogo = await logo?.filter((items) => items.partnership_types === 2);
                                     src={`${IMAGE_URL}/${item?.logos}`}
                                     alt="Partner Logo"
                                     loading="lazy"
-                                    class="w-32 h-32 mx-auto mb-4 hover:filter-none filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out object-contain"
+                                    class="w-48 h-48 mx-auto mb-4 transition-all duration-500 ease-in-out object-contain"
                                 />
                             </div>
                         ))

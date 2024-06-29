@@ -3,7 +3,11 @@ import Layouts from "@layouts/Layouts.astro";
 import EventGallery from "@components/page/events/index.astro";
 import { loadEnv } from "vite";
 
-const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(
+    process.env.NODE_ENV || "",
+    process.cwd(),
+    "",
+);
 
 const API_URL = VITE_API_URL;
 const IMAGE_URL = VITE_IMAGE_URL;
@@ -18,7 +22,7 @@ async function getCategory({ params }) {
 
 async function getEvent({ event_slug }) {
     const filter = JSON.stringify({ event_name: { _eq: event_slug } });
-    const newUrlParam = `${API_URL}/items/Events?filter=${filter}`;
+    const newUrlParam = `${API_URL}/items/event_types`;
     const response = await fetch(newUrlParam);
     const event = await response.json();
     return {
@@ -31,9 +35,30 @@ const { eventCategory } = await getCategory({ params: {} });
 ---
 
 <Layouts title="Events">
-    <EventGallery
-        eventCategory={eventCategory}
-        event={event}
-        IMAGE_URL={IMAGE_URL}
-    />
+<section id="event-list" class="p-4 md:p-4 h-auto text-center">
+    <div class="container mx-auto">
+        <h2 class="text-xl md:text-2xl font-bold mb-4">Event List</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+            {
+                event?.map((item) => (
+                    <div class="cursor-pointer relative event-item p-4 border rounded-lg text-center flex justify-center items-center h-full">
+                        <a href={`/events/${item?.id}/${item?.slug}`} class="w-full h-full flex justify-center items-center">
+                            <img
+                                src={`${IMAGE_URL}/${item?.event_image}`}
+                                alt={item?.event_name}
+                                class="w-full h-auto rounded-lg mb-4 object-contain"
+                                style="max-width: 200px; max-height: 200px;"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                            <h3 class="absolute font-bold bottom-0 bg-white text-black px-2 py-1 rounded-lg">
+                                {item?.name_events}
+                            </h3>
+                        </a>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</section>
 </Layouts>

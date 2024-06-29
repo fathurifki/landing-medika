@@ -1,61 +1,34 @@
 ---
 import Layouts from "@layouts/Layouts.astro";
-import { Image } from "astro:assets";
-import React, { useState, useEffect } from "react";
+import { SEO } from "astro-seo";
 import { loadEnv } from "vite";
 
-const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
+const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(
+    process.env.NODE_ENV || "",
+    process.cwd(),
+    "",
+);
 
 import InputComponent from "@components/input/InputComponent.jsx";
 
 const API_URL = VITE_API_URL;
 const IMAGE_URL = VITE_IMAGE_URL;
-
-interface CatalogItem {
-    uuid: number;
-    status: string;
-    sort: null;
-    user_created: string;
-    date_created: Date;
-    product_image: string;
-    name: string;
-    tags: string[];
-    image_files: string[];
-}
-
-interface FetchDataResponse {
-    catalogProduct: CatalogItem[];
-}
-
-async function fetchData(filters = {}): Promise<FetchDataResponse | undefined> {
-    try {
-        const query = new URLSearchParams(filters).toString();
-        const response = await fetch(`${API_URL}/items/Catalog?${query}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        // You can now use the fetched data as needed
-        return {
-            catalogProduct: data?.data,
-        };
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-}
-
-const { catalogProduct } = (await fetchData()) ?? { catalogProduct: [] };
 const { slug } = Astro.params;
 ---
 
 <Layouts title="products">
     <main class="p-8">
+        <SEO
+            title="APM Medical Tools - High Quality Medical Devices"
+            description="Search and explore our extensive catalog of high-quality medical tools and devices. Find the best solutions tailored to your medical needs."
+        />
         <section id="product-search" class="mb-8">
             <InputComponent
                 client:load
                 params={slug}
                 API_URL={API_URL}
                 IMAGE_URL={IMAGE_URL}
+                url={Astro.request.url}
             />
         </section>
     </main>

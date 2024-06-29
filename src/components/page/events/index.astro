@@ -1,34 +1,17 @@
 ---
 import { Image } from "astro:assets";
-const { eventCategory, event, IMAGE_URL } = Astro.props;
+const { eventCategory, event, IMAGE_URL, eventDetail } = Astro.props;
 ---
 
 <section class="p-8">
-    <h2 class="text-3xl font-bold mb-4">View our gallery</h2>
-    <nav class="mb-6">
-        <ul class="flex space-x-4">
-            {
-                eventCategory?.map((event) => (
-                    <li data-key={event.id}>
-                        <a
-                            href={`/events/${event?.id}/${event.enter_slugs}`}
-                            class="text-blue-500 hover:underline"
-                        >
-                            {event?.name_events}
-                        </a>
-                    </li>
-                ))
-            }
-        </ul>
-    </nav>
-
+    <h2 class="text-3xl font-bold mb-4">{eventDetail?.name_events}</h2>
+    <span class="text-md mb-6 justify-center">
+        {eventDetail?.Description}
+    </span>
     <div>
         {
             event?.map((event) => (
                 <div>
-                    <span class="text-md mb-6" style="text-align: justify;">
-                        {event?.event_description}
-                    </span>
                     <div class="gallery grid grid-cols-1 mt-6 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-scroll md:mt-6">
                         <Image
                             src={`${IMAGE_URL}/${event.event_image}`}
