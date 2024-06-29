@@ -29,33 +29,30 @@ export default function FormPage({ apiUrl }) {
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
+        } else if (response.ok) {
+            Toastify({
+                text: "Form submitted successfully!",
+                className: "success",
+                style: {
+                    background: "#00b09b",
+                }
+            }).showToast();
+            setForm({
+                name: "",
+                email: "",
+                phone_number: "",
+                message: "",
+            });
+        } else {
+            const responseData = await response.json();
+            return responseData;
         }
 
-        const responseData = await response.json();
-        return responseData;
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            await postData(form);
-            Toastify({
-                text: "Form submitted successfully!",
-                className: "success",
-                style: {
-                    background: "#00b09b",
-                }
-            }).showToast();
-        } catch (error) {
-            console.error("Error submitting form:", error);
-            Toastify({
-                text: "Form submitted successfully!",
-                className: "success",
-                style: {
-                    background: "#00b09b",
-                }
-            }).showToast();
-        }
+        await postData(form);
     };
 
     return (

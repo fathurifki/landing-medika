@@ -18,13 +18,13 @@ const DetailPage = ({ ...props }) => {
                 const catalogProduct = data?.data;
 
                 const fetchedImages = [
-                    { 
-                        src: catalogProduct?.product_image ? `${props.IMAGE_URL}/${catalogProduct.product_image}` : "", 
-                        alt: catalogProduct?.name ? `${catalogProduct.name}` : "" 
+                    {
+                        src: catalogProduct?.product_image ? `${props.IMAGE_URL}/${catalogProduct.product_image}` : "",
+                        alt: catalogProduct?.name ? `${catalogProduct.name}` : ""
                     },
                     {
-                        src: catalogProduct?.additional_image ? `${props.IMAGE_URL}/${catalogProduct.additional_image}` : "", 
-                        alt: catalogProduct?.name ? `additional ${catalogProduct.name}` : "" 
+                        src: catalogProduct?.additional_image ? `${props.IMAGE_URL}/${catalogProduct.additional_image}` : "",
+                        alt: catalogProduct?.name ? `additional ${catalogProduct.name}` : ""
                     },
                 ];
 
@@ -40,7 +40,7 @@ const DetailPage = ({ ...props }) => {
                 setVideo(fetchedVideo);
                 setMainMedia({ src: fetchedImages[0].src, type: "image" });
             } catch (error) {
-                console.error("Error fetching data:", error);
+                return false
             } finally {
                 setLoading(false);
             }
@@ -66,64 +66,78 @@ const DetailPage = ({ ...props }) => {
                         >
                             {
                                 images?.map((image, index) => (
-                                    <div key={index} className="p-2 cursor-pointer hover:bg-gray-200" onClick={() => handleMediaClick(image.src, "image")}>
-                                        <img
-                                            src={image.src}
-                                            alt={image.alt}
-                                            className="w-full h-auto"
-                                        />
-                                    </div>
+                                    image.src && (
+                                        <div key={index} className="p-2 cursor-pointer hover:bg-gray-200" onClick={() => handleMediaClick(image.src, "image")}>
+                                            <img
+                                                src={image.src}
+                                                alt={image.alt}
+                                                className="w-full h-auto"
+                                            />
+                                        </div>
+                                    )
                                 ))
                             }
-                            <div className="relative p-2 cursor-pointer hover:bg-gray-200" onClick={() => handleMediaClick(video.src, "video")}>
-                                <img
-                                    src={video?.thumbnail}
-                                    alt={video?.alt}
-                                    className="w-full h-auto"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="bg-black bg-opacity-50 rounded-full p-2">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-12 w-12 text-white"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
-                                            />
-                                        </svg>
-                                    </div>
+                            {video?.src && !video.src.includes("/null") && (
+                                <div className="relative p-2 cursor-pointer hover:bg-gray-200" onClick={() => handleMediaClick(video.src, "video")}>
+                                    {
+                                        video?.thumbnail && (
+                                            <>
+                                                <img
+                                                    src={video?.thumbnail}
+                                                    alt={video?.alt}
+                                                    className="w-full h-auto"
+                                                />
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    <div className="bg-black bg-opacity-50 rounded-full p-2">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="h-12 w-12 text-white"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke="currentColor"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="2"
+                                                                d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )
+                                    }
                                 </div>
-                            </div>
+                            )}
                         </div>
                         <div
                             className="flex-grow flex justify-center items-center overflow-x-auto md:overflow-auto"
                         >
-                            {mainMedia.type === "image" ? (
-                                <img
-                                    id="main-media"
-                                    src={mainMedia.src}
-                                    alt="Main Media"
-                                    className="max-w-full max-h-full"
-                                />
-                            ) : (
-                                <video
-                                    id="main-media-video"
-                                    controls
-                                    className="max-w-full max-h-full"
-                                >
-                                    <source
-                                        id="main-video-source"
+                            {mainMedia.src ? (
+                                mainMedia.type === "image" ? (
+                                    <img
+                                        id="main-media"
                                         src={mainMedia.src}
-                                        type="video/mp4"
+                                        alt="Main Media"
+                                        className="max-w-full max-h-full"
                                     />
-                                    Your browser does not support the video tag.
-                                </video>
+                                ) : (
+                                    <video
+                                        id="main-media-video"
+                                        controls
+                                        className="max-w-full max-h-full"
+                                    >
+                                        <source
+                                            id="main-video-source"
+                                            src={mainMedia.src}
+                                            type="video/mp4"
+                                        />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                )
+                            ) : (
+                                <span className="text-gray-500 italic">Don't have photo attachment</span>
                             )}
                         </div>
                     </div>

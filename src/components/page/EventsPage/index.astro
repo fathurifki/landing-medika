@@ -1,0 +1,28 @@
+---
+import { Image } from "astro:assets";
+const { eventCategory, event, IMAGE_URL, eventDetail } = Astro.props;
+---
+
+<section class="p-8">
+    <h2 class="text-3xl text-center font-bold mb-4">{eventDetail?.name_events}</h2>
+    <div set:html={eventDetail?.Description} />
+    <div
+        class="mt-4 gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-96 overflow-y-scroll sm:justify-start justify-center"
+    >
+        {
+            event?.map((event) => (
+                <div class="gallery-item mb-6">
+                    <Image
+                        src={`${IMAGE_URL}/${event.event_image}`}
+                        height={200}
+                        width={200}
+                        alt={eventDetail?.name_events}
+                        class="w-full h-72 rounded shadow object-cover"
+                        style="max-height: 300px; max-width: 100%;"
+                        loading="lazy"
+                    />
+                </div>
+            ))
+        }
+    </div>
+</section>

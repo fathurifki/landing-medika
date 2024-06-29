@@ -18,7 +18,7 @@ const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(
 );
 
 async function getNavbar() {
-    const response = await fetch(`${VITE_API_URL}/items/sub_category`);
+    const response = await fetch(`${VITE_API_URL}/items/sub_category?limit=13`);
     const category = await fetch(`${VITE_API_URL}/items/category_product`);
     const data = await response.json();
     const categoryData = await category.json();
@@ -39,14 +39,14 @@ const company = await fetchCompany();
 ---
 
 <div
-    class="hidden text-sm md:flex p-4 flex-col md:flex-row md:justify-between md:items-center text-gray-700 bg-white shadow"
+    class="hidden md:flex text-sm p-4 flex-col md:flex-row md:justify-between md:items-center text-gray-700 bg-white shadow"
 >
-    <div class="flex flex-col md:flex-row md:items-center">
+    <div class="flex flex-col md:flex-row md:items-center mb-2 md:mb-0">
         <span class="flex items-center mb-2 md:mb-0 md:mr-4">
             <Icon name="mdi:map-marker" class="mr-2 text-red-500" />
             <span class="font-semibold">{company?.address}</span>
         </span>
-        <span class="flex items-center">
+        <span class="flex items-center mb-2 md:mb-0">
             <Icon name="mdi:email-outline" class="mr-2 text-blue-500" />
             <span class="font-semibold">{company?.email_address}</span>
         </span>
@@ -56,131 +56,322 @@ const company = await fetchCompany();
         <span class="font-semibold">{company?.phone_number}</span>
     </div>
 </div>
-<Astronav>
+<div class="hidden lg:block">
+    <Astronav>
+        <div
+            class="sticky top-0 z-20 flex flex-col lg:flex-row lg:items-center lg:justify-between h-full lg:h-[10vh] lg:p-6 bg-[#2980B9] bg-gradient-to-r from-[#FFFFFF] via-[#6DD5FA] to-[#2980B9] text-white"
+        >
+            <div class="flex justify-between p-2">
+                <a href="/">
+                    <Image
+                        src={`${VITE_IMAGE_URL}/${company?.logo_navbar}`}
+                        width={200}
+                        height={200}
+                        alt="My Landing Page"
+                        class="mb-4 lg:mb-0 lg:mr-8"
+                        loading="lazy"
+                        decoding="async"
+                        style="max-width: 200px; max-height: 200px;"
+                    />
+                </a>
+                <MenuIcon class="lg:hidden" />
+            </div>
+            <MenuItems
+                class="hidden flex flex-col border-t border-gray-300 items-end h-full text-[#1B2F59] p-2 lg:flex lg:flex-row lg:justify-center lg:items-center lg:border-none"
+            >
+                <ul
+                    class="flex flex-col lg:flex-row lg:items-center lg:justify-end lg:space-x-4 h-full text-right"
+                >
+                    <li class="mb-2 lg:mb-0 lg:hidden">
+                        <a href="/" class="hover:underline text-white font-bold"
+                            >Home</a
+                        >
+                    </li>
+                    <li class="mb-0 hidden lg:block">
+                        <a
+                            href="/"
+                            class="flex justify-center items-center text-white"
+                        >
+                            <Icon name="mdi:home" class="text-lg" />
+                        </a>
+                    </li>
+                    <li class="mb-2 lg:mb-0">
+                        <Dropdown class="group">
+                            <button class="content">
+                                <span class="text-white font-bold"
+                                    >Healthcare Product</span
+                                >
+                            </button>
+                            <DropdownItems
+                                class="hidden group-focus:block absolute bg-white shadow-lg rounded-md mt-2 z-30"
+                            >
+                                <ul
+                                    class="grid grid-cols-2 gap-4 p-4 text-right lg:text-left"
+                                >
+                                    {
+                                        catalog?.map((item) => (
+                                            <li data-key={item?.id}>
+                                                <a
+                                                    href={`/products?sub=${item?.id}`}
+                                                    class="hover:underline text-left"
+                                                >
+                                                    {item?.sub_category}
+                                                </a>
+                                            </li>
+                                        ))
+                                    }
+                                    <li>
+                                        <a
+                                            href="/products"
+                                            class="hover:underline text-left font-bold"
+                                            >Explore More...</a
+                                        >
+                                    </li>
+                                </ul>
+                            </DropdownItems>
+                        </Dropdown>
+                    </li>
+                    <li class="mb-2 lg:mb-0">
+                        <Dropdown class="group">
+                            <button class="content">
+                                <span class="text-white font-bold"
+                                    >Medical Speciality Care</span
+                                >
+                            </button>
+                            <DropdownItems
+                                class="hidden group-focus:block absolute bg-white shadow-lg rounded-md mt-2 z-30"
+                            >
+                                <ul
+                                    class="grid grid-cols-2 gap-4 p-4 text-right lg:text-left"
+                                >
+                                    {
+                                        category?.map((item) => (
+                                            <li data-key={item?.id}>
+                                                <a
+                                                    href={`/products/${item?.id}`}
+                                                    class="hover:underline text-left md:text-right"
+                                                >
+                                                    {item?.name}
+                                                </a>
+                                            </li>
+                                        ))
+                                    }
+                                    <li>
+                                        <a
+                                            href="/products"
+                                            class="hover:underline text-left font-bold"
+                                            >Explore More...</a
+                                        >
+                                    </li>
+                                </ul>
+                            </DropdownItems>
+                        </Dropdown>
+                    </li>
+                    <li class="mb-2 lg:mb-0">
+                        <a
+                            href="/events"
+                            class="hover:underline text-white font-bold"
+                            >Medical Society Event</a
+                        >
+                    </li>
+                    <li class="mb-2 lg:mb-0">
+                        <a
+                            href="/partners"
+                            class="hover:underline text-white font-bold"
+                            >Our Partners</a
+                        >
+                    </li>
+                </ul>
+            </MenuItems>
+        </div>
+    </Astronav>
+</div>
+
+<div class="m-0 p-4 lg:hidden bg-[#2980B9] bg-gradient-to-r from-[#FFFFFF] via-[#6DD5FA] to-[#2980B9]">
+    <div id="openDrawerButton" class="flex justify-between items-center">
+        <Image
+            src={`${VITE_IMAGE_URL}/${company?.logo_navbar}`}
+            width={200}
+            height={200}
+            alt="My Landing Page"
+            class="mb-4 lg:mb-0 lg:mr-8"
+            loading="lazy"
+            decoding="async"
+            style="max-width: 150px; max-height: 150px;"
+        />
+        <Icon name="mdi:menu" class="text-white text-2xl mr-4" />
+    </div>
+
     <div
-        class="sticky top-0 z-20 flex flex-col lg:flex-row lg:items-center lg:justify-between h-full lg:h-[10vh] lg:p-6 bg-[#2980B9] bg-gradient-to-r from-[#FFFFFF] via-[#6DD5FA] to-[#2980B9] text-white"
+        id="drawer"
+        class="fixed left-[-250px] top-0 w-[250px] h-full text-white shadow-md transition-all duration-300 z-50 overflow-y-auto bg-[#2e9dc7] bg-gradient-to-r from-[#2e9dc7] via-[#38a8cb] to-[#1979b4]"
     >
-        <div class="flex justify-between p-2">
+        <button
+            id="closeDrawerButton"
+            class="absolute top-4 right-4 text-white text-3xl hidden"
+        >
+            &times;
+        </button>
+        <div class="p-4">
             <a href="/">
                 <Image
                     src={`${VITE_IMAGE_URL}/${company?.logo_navbar}`}
                     width={200}
                     height={200}
                     alt="My Landing Page"
-                    class="mb-4 lg:mb-0 lg:mr-8"
+                    class="mb-4"
                     loading="lazy"
                     decoding="async"
                     style="max-width: 200px; max-height: 200px;"
                 />
             </a>
-            <MenuIcon class="lg:hidden" />
-        </div>
-        <MenuItems
-            class="hidden flex flex-col border-t border-gray-300 items-end h-full text-[#1B2F59] p-2 lg:flex lg:flex-row lg:justify-center lg:items-center lg:border-none"
-        >
-            <ul
-                class="flex flex-col lg:flex-row lg:items-center lg:justify-end lg:space-x-4 h-full text-right"
-            >
+
+            <ul class="flex flex-col h-full text-left space-y-4">
                 <li class="mb-2 lg:mb-0 lg:hidden">
                     <a href="/" class="hover:underline text-white font-bold"
                         >Home</a
                     >
                 </li>
-                <li class="mb-0 hidden lg:block">
-                    <a
-                        href="/"
-                        class="flex justify-center items-center text-white"
+                <li class="mb-2 lg:mb-0">
+                    <button
+                        class="content"
+                        onclick="toggleNestedMenu('healthcareMenu')"
                     >
-                        <Icon name="mdi:home" class="text-lg" />
-                    </a>
+                        <span class="text-white font-bold"
+                            >Healthcare Product</span
+                        >
+                    </button>
+                    <ul
+                        id="healthcareMenu"
+                        class="nested-menu-content text-left"
+                    >
+                        {
+                            catalog?.map((item) => (
+                                <li key={item?.id}>
+                                    <a
+                                        href={`/products?sub=${item?.id}`}
+                                        class="hover:underline text-left"
+                                    >
+                                        {item?.sub_category}
+                                    </a>
+                                </li>
+                            ))
+                        }
+                        <li>
+                            <a
+                                href="/products"
+                                class="hover:underline text-left font-bold"
+                            >
+                                Explore More...
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="mb-2 lg:mb-0">
-                    <Dropdown class="group">
-                        <button class="content">
-                            <span class="text-white font-bold"
-                                >Healthcare Product</span
-                            >
-                        </button>
-                        <DropdownItems
-                            class="hidden group-focus:block absolute bg-white shadow-lg rounded-md mt-2 z-30"
+                    <button
+                        class="content"
+                        onclick="toggleNestedMenu('medicalSpecialityMenu')"
+                    >
+                        <span class="text-white font-bold"
+                            >Medical Speciality Care</span
                         >
-                            <ul
-                                class="grid grid-cols-2 gap-4 p-4 text-right lg:text-left"
-                            >
-                                {
-                                    catalog?.map((item) => (
-                                        <li data-key={item?.id}>
-                                            <a
-                                                href={`/products?sub=${item?.id}`}
-                                                class="hover:underline text-left"
-                                            >
-                                                {item?.sub_category}
-                                            </a>
-                                        </li>
-                                    ))
-                                }
-                                <li>
+                    </button>
+                    <ul class="text-left">
+                        {
+                            category?.map((item) => (
+                                <li key={item?.id}>
                                     <a
-                                        href="/products"
-                                        class="hover:underline text-left font-bold"
-                                        >Explore More...</a
+                                        href={`/products/${item?.id}`}
+                                        class="hover:underline text-left"
                                     >
+                                        {item?.name}
+                                    </a>
                                 </li>
-                            </ul>
-                        </DropdownItems>
-                    </Dropdown>
-                </li>
-                <li class="mb-2 lg:mb-0">
-                    <Dropdown class="group">
-                        <button class="content">
-                            <span class="text-white font-bold"
-                                >Medical Speciality Care</span
+                            ))
+                        }
+                        <li>
+                            <a
+                                href="/products"
+                                class="hover:underline text-left font-bold"
                             >
-                        </button>
-                        <DropdownItems
-                            class="hidden group-focus:block absolute bg-white shadow-lg rounded-md mt-2 z-30"
-                        >
-                            <ul
-                                class="grid grid-cols-2 gap-4 p-4 text-right lg:text-left"
-                            >
-                                {
-                                    category?.map((item) => (
-                                        <li data-key={item?.id}>
-                                            <a
-                                                href={`/products/${item?.id}`}
-                                                class="hover:underline text-left md:text-right"
-                                            >
-                                                {item?.name}
-                                            </a>
-                                        </li>
-                                    ))
-                                }
-                                <li>
-                                    <a
-                                        href="/products"
-                                        class="hover:underline text-left font-bold"
-                                        >Explore More...</a
-                                    >
-                                </li>
-                            </ul>
-                        </DropdownItems>
-                    </Dropdown>
+                                Explore More...
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="mb-2 lg:mb-0">
                     <a
                         href="/events"
                         class="hover:underline text-white font-bold"
-                        >Medical Society Event</a
                     >
+                        Medical Society Event
+                    </a>
                 </li>
                 <li class="mb-2 lg:mb-0">
                     <a
                         href="/partners"
                         class="hover:underline text-white font-bold"
-                        >Our Partners</a
                     >
+                        Our Partners
+                    </a>
                 </li>
             </ul>
-        </MenuItems>
+        </div>
     </div>
-</Astronav>
+</div>
+<div
+    id="overlay"
+    class="fixed inset-0 bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 invisible z-40"
+>
+</div>
+
+<script>
+    function toggleNestedMenu(id) {
+        const menu = document.getElementById(id);
+        if (menu.classList.contains("expanded")) {
+            menu.classList.remove("expanded");
+        } else {
+            menu.classList.add("expanded");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const openDrawerButton = document.getElementById("openDrawerButton");
+        const closeDrawerButton = document.getElementById("closeDrawerButton");
+        const drawer = document.getElementById("drawer");
+        const overlay = document.getElementById("overlay");
+
+        openDrawerButton.addEventListener("click", function () {
+            drawer.classList.add("left-0");
+            drawer.classList.remove("left-[-250px]");
+            overlay.classList.add("opacity-100", "visible");
+            overlay.classList.remove("opacity-0", "invisible");
+        });
+
+        closeDrawerButton.addEventListener("click", function () {
+            drawer.classList.add("left-[-250px]");
+            drawer.classList.remove("left-0");
+            overlay.classList.add("opacity-0", "invisible");
+            overlay.classList.remove("opacity-100", "visible");
+        });
+
+        overlay.addEventListener("click", function () {
+            drawer.classList.add("left-[-250px]");
+            drawer.classList.remove("left-0");
+            overlay.classList.add("opacity-0", "invisible");
+            overlay.classList.remove("opacity-100", "visible");
+        });
+
+        document.addEventListener("click", function (event) {
+            if (
+                !drawer.contains(event.target) &&
+                !openDrawerButton.contains(event.target)
+            ) {
+                drawer.classList.add("left-[-250px]");
+                drawer.classList.remove("left-0");
+                overlay.classList.add("opacity-0", "invisible");
+                overlay.classList.remove("opacity-100", "visible");
+            }
+        });
+    });
+</script>

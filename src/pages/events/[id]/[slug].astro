@@ -1,6 +1,6 @@
 ---
 import Layouts from "@layouts/Layouts.astro";
-import EventGallery from "@components/page/events/index.astro";
+import EventGallery from "@components/page/EventsPage/index.astro";
 import { loadEnv } from "vite";
 
 const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(
@@ -25,7 +25,6 @@ async function getEvent({ event_slug }) {
     const newUrlParam = `${API_URL}/items/Events?filter=${filter}`;
     const response = await fetch(newUrlParam);
     if (!response.ok) {
-        console.error("Failed to fetch event data:", response.statusText);
         return { event: null };
     }
     const event = await response.json();
