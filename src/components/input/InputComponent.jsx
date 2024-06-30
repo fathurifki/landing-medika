@@ -59,32 +59,20 @@ const InputComponent = ({ ...props }) => {
         let url;
 
         let filterObject = {};
-        if (filters.name !== "" && Object.keys(filters.category).length === 0) {
+
+        if (filters.name) {
             filterObject.name = { _eq: filters.name };
         }
 
-        if (Object.keys(filters.category).length !== 0) {
+        if (filters.category && filters.category !== 'all') {
             filterObject.product = { _eq: filters.category };
         }
 
-        if (Object.keys(filters.category).length !== 0 && filters.name !== "" && filters.category_product !== null && filters.brand !== "") {
-            filterObject.product = { _eq: filters.category };
-            filterObject.name = { _eq: filters.name };
-            filterObject.sub_product = { _eq: +filters.subCategory };
-            filterObject.brand = { _eq: filters.brand };
-        }
-
-        if (filters.name === "" && Object.keys(filters.category).length === 0) {
-            filterObject = {};
-        }
-
-        if (filters.name === "" && Object.keys(filters.category).length === 0 && filters.category_product !== null) {
-            filterObject = {};
+        if (filters.category_product  && filters.category_product !== 'all') {
             filterObject.sub_product = { _eq: +filters.category_product };
         }
 
-        if (filters.name === "" && Object.keys(filters.category).length === 0 && filters.category_product === null && filters.brand !== "") {
-            filterObject = {};
+        if (filters.brand && filters.brand !== 'all') {
             filterObject.brand = { _eq: filters.brand };
         }
 
@@ -130,7 +118,7 @@ const InputComponent = ({ ...props }) => {
         const selectedCategory = category !== "" ? category : props?.params;
         const initialSubCategory = subCategory === '0' ? '' : subCategory;
         fetchData({ name: name, category: selectedCategory, category_product: initialSubCategory, brand: brand });
-    }, [name, category, searchTerm.page, searchTerm.limit, props?.params, subCategory, brand]);
+    }, [name, category, searchTerm.page, searchTerm.limit, subCategory, brand]);
 
     return (
         <div>
@@ -153,7 +141,7 @@ const InputComponent = ({ ...props }) => {
                             onChange={(e) => setCategory(e.target.value)}
                             value={category}
                         >
-                            <option value="">All</option>
+                            <option value="all">All</option>
                             {categories?.map((category) => (
                                 <option key={category.id} value={category.id}>{category.name}</option>
                             ))}
@@ -167,7 +155,7 @@ const InputComponent = ({ ...props }) => {
                             onChange={(e) => setSubCategory(e.target.value)}
                             value={subCategory}
                         >
-                            <option value="">All</option>
+                            <option value="all">All</option>
                             {subCategories?.map((category) => (
                                 <option key={category.id} value={category.id}>{category.sub_category}</option>
                             ))}
@@ -181,7 +169,7 @@ const InputComponent = ({ ...props }) => {
                             onChange={(e) => setBrand(e.target.value)}
                             value={brand}
                         >
-                            <option value="">All</option>
+                            <option value="all">All</option>
                             {brandNames?.map((category) => (
                                 <option key={category.id} value={category.id}>{category.brand_name}</option>
                             ))}

@@ -6,7 +6,6 @@ import node from '@astrojs/node';
 
 // https://astro.build/config
 export default defineConfig({
-    site: "http://landing-medika.pomerain.org/",
     integrations: [tailwind(), icons(), react({
         include: ['**/react/*']
     })],
