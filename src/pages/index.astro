@@ -25,7 +25,7 @@ async function fetchData(): Promise<{ blogData: any[] } | undefined> {
       blogData: data?.data || [],
     };
   } catch (error) {
-    return false
+    return;
   }
 }
 
@@ -40,7 +40,7 @@ async function fetchCatalog(): Promise<{ catalogData: any[] } | undefined> {
       catalogData: data?.data || [],
     };
   } catch (error) {
-    return false
+    return;
   }
 }
 
@@ -55,7 +55,7 @@ async function fetchPartner(): Promise<{ partnerData: any[] } | undefined> {
       partnerData: data?.data || [],
     };
   } catch (error) {
-    return false
+    return;
   }
 }
 
@@ -63,31 +63,42 @@ async function fetchMedical(): Promise<{ medicalData: any[] } | undefined> {
   try {
     const response = await fetch(`${VITE_API_URL}/items/medical_specialty`);
     const category = await fetch(`${VITE_API_URL}/items/category_product`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    const subCategory = await fetch(`${VITE_API_URL}/items/sub_category`);
+    if (!response?.ok) {
+      throw new Error(`HTTP error! status: ${response?.status}`);
     }
     const data = await response.json();
     const categoryData = await category.json();
+    const subCategoryData = await subCategory.json();
     return {
       medicalData: data?.data || [],
-      category: categoryData?.data || []
+      category: categoryData?.data || [],
+      subCategory:
+        subCategoryData?.data.filter(
+          (item) => item.sub_category === "Ventilator",
+        )?.[0] || [],
     };
   } catch (error) {
-    return false
+    return;
   }
 }
 
 const { blogData } = (await fetchData()) ?? { blogData: [] };
 const { catalogData } = (await fetchCatalog()) ?? { catalogData: [] };
 const { partnerData } = (await fetchPartner()) ?? { partnerData: [] };
-const { medicalData, category } = (await fetchMedical()) ?? { medicalData: [] };
-
+const { medicalData, category, subCategory } = (await fetchMedical()) ?? {
+  medicalData: [],
+  category: [],
+  subCategory: [],
+};
 const mappingData = medicalData.map((item) => {
-  const categoryItem = category.find((categoryItem) => item.title === categoryItem.name);
+  const categoryItem = category.find(
+    (categoryItem) => item.title === categoryItem.name,
+  );
   if (categoryItem) {
     return {
       ...item,
-      id: categoryItem.id
+      id: categoryItem.id,
     };
   }
   return item;
@@ -160,37 +171,41 @@ const mappingData = medicalData.map((item) => {
     <section id="products" class="p-8 h-auto overflow-x-auto">
       <h2 class="text-2xl font-bold mb-4">Medical Speciality Care</h2>
       <div class="container mx-auto mt-10">
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           {
-            mappingData?.slice(0, 4)?.map((item, index) => (
-                <div class="h-48 rounded-lg relative bg-cover bg-center filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out">
-                  <Image height={48} width={48} src={`${VITE_IMAGE_URL}/${item.image}`} alt={item.title} class="absolute inset-0 w-full h-full object-cover rounded-lg" />
-                  <div class="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
-                  <div class="relative z-10 p-6">
-                    <span class="text-white text-xl">{item.title}</span>
-                    <div class="text-white text-base mt-2" set:html={item?.description} />
-                    <div class="mt-2 text-white font-bold hover:font-extrabold">
-                      <a href={`/products/${item.id}`} >Explore More</a>
-                    </div>
+            mappingData?.map((item, index) => (
+              <div
+                class={`h-64 rounded-lg relative bg-cover bg-center filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out ${index === 0 || index === mappingData.length - 1 ? "md:col-span-2" : ""}`}
+              >
+                <a href={index === 0 ? `/products?sub=${subCategory.id}` : `/products/${item.id}`}>
+                  <Image
+                    height={64}
+                    width={64}
+                    src={`${VITE_IMAGE_URL}/${item.image}?format=webp&quality=75`}
+                    alt={item.title}
+                    class="absolute inset-0 w-full h-full object-cover rounded-lg"
+                  />
+                  <div class="absolute inset-0 bg-black opacity-50 rounded-lg" />
+                  <div class="relative z-10 p-6 flex flex-col justify-end">
+                    <span
+                      class={`text-white text-2xl ${index === 0 ? "md:text-3xl" : ""}  font-bold`}
+                    >
+                      {item.title}
+                    </span>
+                    <div
+                      class={`text-white text-base mt-2 ${index === 0 ? "md:text-5xl" : ""}`}
+                      set:html={item?.description}
+                    />
+                    {index !== 0 && (
+                      <div class="mt-2 text-white font-bold hover:font-extrabold">
+                        <a href={`/products/${item.id}`}>Explore More</a>
+                      </div>
+                    )}
                   </div>
-                </div>
+                </a>
+              </div>
             ))
           }
-        </div>
-        <div class="grid grid-cols-1 mt-4">
-          <div class="flex justify-center">
-            <div class="h-40 w-[500px] rounded-lg relative bg-cover bg-center transition-all duration-500 ease-in-out">
-              <Image height={40} width={500} src={`${VITE_IMAGE_URL}/${medicalData[4].image}`} alt={medicalData[4].title} class="absolute inset-0 w-full h-full object-cover rounded-lg" />
-              <div class="absolute inset-0 bg-black opacity-50 rounded-lg transition-opacity duration-500 ease-in-out hover:opacity-0"></div>
-              <div class="relative z-10 p-4 text-white">
-                <span class="block text-lg">{medicalData[4].title}</span>
-                <div set:html={medicalData[4]?.description} />
-                <div class="mt-2 text-white font-bold hover:font-extrabold">
-                  <a href={`/product-detail/${medicalData[4].id}`} >Explore More</a>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -208,7 +223,7 @@ const mappingData = medicalData.map((item) => {
               >
                 <a href={`/product-detail/${slide?.uuid}`}>
                   <Image
-                    src={`${VITE_IMAGE_URL}/${slide?.product_image}`}
+                    src={`${VITE_IMAGE_URL}/${slide?.product_image}?limit=5`}
                     alt={slide?.name}
                     width={250}
                     height={250}
@@ -280,7 +295,7 @@ const mappingData = medicalData.map((item) => {
                   (item) =>
                     item?.status === "published" && (
                       <Newscard
-                        imgSrc={`${VITE_IMAGE_URL}/${item?.Banner}`}
+                        imgSrc={`${VITE_IMAGE_URL}/${item?.Banner}?format=webp`}
                         imgAlt={item?.Title}
                         title={item?.Title}
                         description={item?.Content}

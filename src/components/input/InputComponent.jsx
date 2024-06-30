@@ -59,16 +59,15 @@ const InputComponent = ({ ...props }) => {
         let url;
 
         let filterObject = {};
+        if (filters.category && filters.category.length) {
+            filterObject.product = { _eq: filters.category };
+        }
 
         if (filters.name) {
             filterObject.name = { _eq: filters.name };
         }
 
-        if (filters.category && filters.category !== 'all') {
-            filterObject.product = { _eq: filters.category };
-        }
-
-        if (filters.category_product  && filters.category_product !== 'all') {
+        if (filters.category_product && filters.category_product !== 'all') {
             filterObject.sub_product = { _eq: +filters.category_product };
         }
 
@@ -195,7 +194,7 @@ const InputComponent = ({ ...props }) => {
                                         <div className="mb-4">
                                             <a href={`/product-detail/${product?.uuid}`}>
                                                 <img
-                                                    src={`${props.IMAGE_URL}/${product?.product_image}`}
+                                                    src={`${props.IMAGE_URL}/${product?.product_image}?format=webp&quality=75`}
                                                     alt={product?.name}
                                                     width={300}
                                                     height={300}

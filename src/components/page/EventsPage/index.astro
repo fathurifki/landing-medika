@@ -13,7 +13,7 @@ const { eventCategory, event, IMAGE_URL, eventDetail } = Astro.props;
             event?.map((event) => (
                 <div class="gallery-item mb-6">
                     <Image
-                        src={`${IMAGE_URL}/${event.event_image}`}
+                        src={`${IMAGE_URL}/${event.event_image}?format=webp&quality=75`}
                         height={200}
                         width={200}
                         alt={eventDetail?.name_events}

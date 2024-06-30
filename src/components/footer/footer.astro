@@ -5,8 +5,8 @@ import { loadEnv } from "vite";
 
 const { VITE_API_URL, VITE_IMAGE_URL } = loadEnv(process.env.NODE_ENV || '', process.cwd(), '');
 
-const API_URL = import.meta.env.PUBLIC_API;
-const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
+// const API_URL = import.meta.env.PUBLIC_API;
+// const IMAGE_URL = import.meta.env.PUBLIC_IMAGE;
 
 const fetchCategory = async () => {
     const response = await fetch(`${VITE_API_URL}/items/category_product`);
@@ -28,7 +28,7 @@ const company = await fetchCompany();
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
             <Image
-                src="/apm_footer.webp"
+                src={`${VITE_IMAGE_URL}/${company?.logo_footer}`}
                 alt="Apmedika Logo"
                 class="mb-4 h-16"
                 loading="lazy"
@@ -38,19 +38,19 @@ const company = await fetchCompany();
                 style="max-width: 100px; max-height: 100px;"
             />
             <p class="text-justify">
-                <b>APM (Apmedika)</b> provides high-quality, affordable treatment.
+                <b>APM</b> provides high-quality, affordable treatment.
                 We serve all hospitals in Indonesia and educate medical staff on
                 our products. Our 24/7 support ensures flawless device operation.
             </p>
             <div class="flex space-x-4 mt-4">
-                <a href="#">
-                    <Icon name="mdi:facebook" class="w-6 h-6" />
+                <a href={company?.instagram}>
+                    <Icon name="mdi:instagram" class="w-6 h-6" />
                 </a>
-                <a href="#">
-                    <Icon name="mdi:twitter" class="w-6 h-6" />
-                </a>
-                <a href="#">
+                <a href={company.linkedin}>
                     <Icon name="mdi:linkedin" class="w-6 h-6" />
+                </a>
+                <a href={company.youtube}>
+                    <Icon name="mdi:youtube" class="w-6 h-6" />
                 </a>
             </div>
         </div>

@@ -64,7 +64,7 @@ const company = await fetchCompany();
             <div class="flex justify-between p-2">
                 <a href="/">
                     <Image
-                        src='/APM.webp'
+                        src={`${VITE_IMAGE_URL}/${company?.logo_navbar}`}
                         width={200}
                         height={200}
                         alt="My Landing Page"
