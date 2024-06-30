@@ -301,7 +301,7 @@ const mappingData = medicalData.map((item) => {
                   (item) =>
                     item?.status === "published" && (
                       <Newscard
-                        imgSrc={`${VITE_IMAGE_URL}/${item?.Banner}?format=webp`}
+                        imgSrc={`${VITE_IMAGE_URL}/${item?.Banner}`}
                         imgAlt={item?.Title}
                         title={item?.Title}
                         description={item?.Content}
