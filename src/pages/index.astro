@@ -169,15 +169,21 @@ const mappingData = medicalData.map((item) => {
     </section>
 
     <section id="products" class="p-8 h-auto overflow-x-auto">
-      <h2 class="text-2xl font-bold mb-4">Medical Speciality Care</h2>
       <div class="container mx-auto mt-10">
+        <h2 class="text-2xl font-bold mb-4">Medical Speciality Care</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           {
             mappingData?.map((item, index) => (
               <div
                 class={`h-64 rounded-lg relative bg-cover bg-center filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out ${index === 0 || index === mappingData.length - 1 ? "md:col-span-2" : ""}`}
               >
-                <a href={index === 0 ? `/products?sub=${subCategory.id}` : `/products/${item.id}`}>
+                <a
+                  href={
+                    index === 0
+                      ? `/products?sub=${subCategory.id}`
+                      : `/products/${item.id}`
+                  }
+                >
                   <Image
                     height={64}
                     width={64}
