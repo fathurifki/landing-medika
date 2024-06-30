@@ -190,17 +190,22 @@ const InputComponent = ({ ...props }) => {
                         products?.length ? (
                             products.map((product) => (
                                 <div key={product.uuid} className="flex flex-col h-full">
-                                    <div className="border border-gray-300 rounded-lg p-4 flex-grow flex justify-center items-center h-full">
-                                        <div className="mb-4">
-                                            <a href={`/product-detail/${product?.uuid}`}>
-                                                <img
-                                                    src={`${props.IMAGE_URL}/${product?.product_image}?format=webp&quality=75`}
-                                                    alt={product?.name}
-                                                    width={300}
-                                                    height={300}
-                                                    className="w-full h-auto rounded-lg object-contain"
-                                                    style={{ maxWidth: '300px', maxHeight: '300px' }}
-                                                />
+                                    <div className="border border-gray-300 rounded-lg p-4 flex-grow flex justify-center items-center h-72">
+                                        <div className="mb-4 w-full h-full flex justify-center items-center">
+                                            <a href={`/product-detail/${product?.uuid}`} className="w-full h-full flex justify-center items-center">
+                                                {
+                                                    product?.product_image ? (
+                                                        <img
+                                                            src={`${props.IMAGE_URL}/${product?.product_image}?format=webp&quality=75`}
+                                                            alt={product?.name}
+                                                            className="w-full h-full rounded-lg object-contain"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full font-bold text-2xl object-contain flex justify-center items-center">
+                                                            <p>Attachment Soon</p>
+                                                        </div>
+                                                    )
+                                                }
                                             </a>
                                         </div>
                                     </div>
