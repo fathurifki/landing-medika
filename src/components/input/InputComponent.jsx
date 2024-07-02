@@ -16,7 +16,6 @@ const useDebounce = (value, delay) => {
     return debouncedValue;
 };
 
-
 const InputComponent = ({ ...props }) => {
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState({
@@ -28,7 +27,7 @@ const InputComponent = ({ ...props }) => {
         limit: 10
     });
 
-    const [category, setCategory] = useState(props.params || '');
+    const [category, setCategory] = useState(props?.params || '');
     const [subCategory, setSubCategory] = useState('');
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -36,30 +35,30 @@ const InputComponent = ({ ...props }) => {
     const [brandNames, setBrandNames] = useState([]);
     const [brand, setBrand] = useState('');
 
+    const name = useDebounce(searchTerm.name._eq, 600);
+
     const fetchCategory = async () => {
         const response = await fetch(`${props.API_URL}/items/category_product`);
         const data = await response.json();
         setCategories(data.data);
-    }
+    };
 
     const fetchSubCategory = async () => {
         const response = await fetch(`${props.API_URL}/items/sub_category`);
         const data = await response.json();
         setSubCategories(data.data);
-    }
+    };
 
     const fetchBrandName = async () => {
         const response = await fetch(`${props.API_URL}/items/brand`);
         const data = await response.json();
         setBrandNames(data.data);
-    }
+    };
 
     const fetchData = async (filters = {}) => {
-        setLoading(true);
-        let url;
 
         let filterObject = {};
-        if (filters.category && filters.category.length) {
+        if (filters.category && filters.category.length && filters.category !== 'all') {
             filterObject.product = { _eq: filters.category };
         }
 
@@ -67,7 +66,7 @@ const InputComponent = ({ ...props }) => {
             filterObject.name = { _eq: filters.name };
         }
 
-        if (filters.category_product && filters.category_product !== 'all') {
+        if (filters.category_product && filters.category_product.length && filters.category_product !== 'all') {
             filterObject.sub_product = { _eq: +filters.category_product };
         }
 
@@ -77,33 +76,41 @@ const InputComponent = ({ ...props }) => {
 
         const query = {
             filter: JSON.stringify(filterObject),
-            page: searchTerm?.page,
-            limit: searchTerm?.limit
+            page: searchTerm.page,
+            limit: searchTerm.limit
         };
         const qp = new URLSearchParams(query);
-        url = `${props.API_URL}/items/Catalog?${qp}`;
+        const url = `${props.API_URL}/items/Catalog?${qp}`;
 
         try {
+            setLoading(true);
+
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response?.json();
-            const filteredStatus = data?.data?.filter(item => item.status !== "draft");
-            setProducts(filteredStatus || []);
+            if (data?.data?.length) {
+                const filteredStatus = data?.data?.filter(item => item.status !== "draft");
+                setProducts(filteredStatus || []);
+                setLoading(false);
+            } else {
+                setProducts(data || []);
+                setLoading(false);
+            }
         } catch (error) {
-            return false
+            console.error('Fetching error:', error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        if (props?.url?.searchParams) {
+        if (props.url?.searchParams) {
             const subCategory = props.url.searchParams.get("sub");
             setSubCategory(subCategory);
         }
-    }, [props?.url?.searchParams]);
+    }, [props.url?.searchParams]);
 
     useEffect(() => {
         fetchCategory();
@@ -111,11 +118,10 @@ const InputComponent = ({ ...props }) => {
         fetchBrandName();
     }, []);
 
-    const name = useDebounce(searchTerm.name._eq, 600);
-
     useEffect(() => {
+        const subCategoryProps = props.url.searchParams.get("sub");
         const selectedCategory = category !== "" ? category : props?.params;
-        const initialSubCategory = subCategory === '0' ? '' : subCategory;
+        const initialSubCategory = subCategory ? subCategory : subCategoryProps;
         fetchData({ name: name, category: selectedCategory, category_product: initialSubCategory, brand: brand });
     }, [name, category, searchTerm.page, searchTerm.limit, subCategory, brand]);
 
@@ -141,7 +147,7 @@ const InputComponent = ({ ...props }) => {
                             value={category}
                         >
                             <option value="all">All</option>
-                            {categories?.map((category) => (
+                            {categories.map((category) => (
                                 <option key={category.id} value={category.id}>{category.name}</option>
                             ))}
                         </select>
@@ -155,7 +161,7 @@ const InputComponent = ({ ...props }) => {
                             value={subCategory}
                         >
                             <option value="all">All</option>
-                            {subCategories?.map((category) => (
+                            {subCategories.map((category) => (
                                 <option key={category.id} value={category.id}>{category.sub_category}</option>
                             ))}
                         </select>
@@ -169,7 +175,7 @@ const InputComponent = ({ ...props }) => {
                             value={brand}
                         >
                             <option value="all">All</option>
-                            {brandNames?.map((category) => (
+                            {brandNames.map((category) => (
                                 <option key={category.id} value={category.id}>{category.brand_name}</option>
                             ))}
                         </select>
@@ -186,41 +192,37 @@ const InputComponent = ({ ...props }) => {
                     id="product-list"
                     className="grid grid-cols-1 md:grid-cols-3 gap-8"
                 >
-                    {
-                        products?.length ? (
-                            products.map((product) => (
-                                <div key={product.uuid} className="flex flex-col h-full">
-                                    <div className="border border-gray-300 rounded-lg p-4 flex-grow flex justify-center items-center h-72">
-                                        <div className="mb-4 w-full h-full flex justify-center items-center">
-                                            <a href={`/product-detail/${product?.uuid}`} className="w-full h-full flex justify-center items-center">
-                                                {
-                                                    product?.product_image ? (
-                                                        <img
-                                                            src={`${props.IMAGE_URL}/${product?.product_image}?format=webp&quality=75`}
-                                                            alt={product?.name}
-                                                            className="w-full h-full rounded-lg object-contain"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full font-bold text-2xl object-contain flex justify-center items-center">
-                                                            <p>Attachment Soon</p>
-                                                        </div>
-                                                    )
-                                                }
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div className="mt-2">
-                                        <h3 className="text-xl font-bold">{product?.name}</h3>
-                                        <p>{product?.tags?.join(", ")}</p>
+                    {products?.length ? (
+                        products?.map((product) => (
+                            <div key={product.uuid} className="flex flex-col h-full">
+                                <div className="border border-gray-300 rounded-lg p-4 flex-grow flex justify-center items-center h-72">
+                                    <div className="mb-4 w-full h-full flex justify-center items-center">
+                                        <a href={`/product-detail/${product.uuid}`} className="w-full h-full flex justify-center items-center">
+                                            {product?.product_image ? (
+                                                <img
+                                                    src={`${props.IMAGE_URL}/${product.product_image}?format=webp&quality=75`}
+                                                    alt={product.name}
+                                                    className="w-full h-full rounded-lg object-contain"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full font-bold text-2xl object-contain flex justify-center items-center">
+                                                    <p>Attachment Soon</p>
+                                                </div>
+                                            )}
+                                        </a>
                                     </div>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="flex justify-center items-center col-span-full">
-                                <p className="text-lg font-semibold">No products found here</p>
+                                <div className="mt-2">
+                                    <h3 className="text-xl font-bold">{product.name}</h3>
+                                    <p>{product?.tags?.join(", ")}</p>
+                                </div>
                             </div>
-                        )
-                    }
+                        ))
+                    ) : (
+                        <div className="flex justify-center items-center col-span-full">
+                            <p className="text-lg font-semibold">No products found here</p>
+                        </div>
+                    )}
                 </section>
             )}
 
@@ -246,8 +248,8 @@ const InputComponent = ({ ...props }) => {
                         e.preventDefault();
                         setSearchTerm({ ...searchTerm, page: searchTerm.page + 1 });
                     }}
-                    disabled={!products?.length}
-                    style={{ opacity: !products?.length ? '0.5' : '1' }}
+                    disabled={!products.length}
+                    style={{ opacity: !products.length ? '0.5' : '1' }}
                 >
                     Next
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
