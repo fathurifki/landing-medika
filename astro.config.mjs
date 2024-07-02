@@ -27,25 +27,25 @@ export default defineConfig({
     adapter: node({
         mode: "standalone"
     }),
-    vite: {
-        build: {
-            rollupOptions: {
-                plugins: [
-                    {
-                        name: 'generate-robots-txt',
-                        writeBundle() {
-                            const robotsTxtContent = `
-                        User-agent: *
-                        Allow: /
+    // vite: {
+    //     build: {
+    //         rollupOptions: {
+    //             plugins: [
+    //                 {
+    //                     name: 'generate-robots-txt',
+    //                     writeBundle() {
+    //                         const robotsTxtContent = `
+    //                     User-agent: *
+    //                     Allow: /
 
-                        Sitemap: ${new URL('sitemap-index.xml', VITE_SITE_URL).href}
-                                    `.trim();
-                            const outputPath = path.resolve(process.cwd(), 'dist/server/robots.txt');
-                            fs.writeFileSync(outputPath, robotsTxtContent);
-                        }
-                    }
-                ]
-            }
-        }
-    }
+    //                     Sitemap: ${new URL('sitemap-index.xml', VITE_SITE_URL).href}
+    //                                 `.trim();
+    //                         const outputPath = path.resolve(process.cwd(), 'dist/server/robots.txt');
+    //                         fs.writeFileSync(outputPath, robotsTxtContent);
+    //                     }
+    //                 }
+    //             ]
+    //         }
+    //     }
+    // }
 });
