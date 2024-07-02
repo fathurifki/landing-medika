@@ -35,9 +35,11 @@ export default defineConfig({
                         name: 'generate-robots-txt',
                         writeBundle() {
                             const robotsTxtContent = `
-                            User-agent: *
-                            Allow: /
-                            Sitemap: ${new URL('sitemap-index.xml', import.meta.env.VITE_SITE_URL).href}`.trim();
+                        User-agent: *
+                        Allow: /
+
+                        Sitemap: ${new URL('sitemap-index.xml', VITE_SITE_URL).href}
+                                    `.trim();
                             const outputPath = path.resolve(process.cwd(), 'dist/server/robots.txt');
                             fs.writeFileSync(outputPath, robotsTxtContent);
                         }
