@@ -1,0 +1,3 @@
+User-agent: *
+                            Allow: /
+                            Sitemap: https://apm-medical.co.id/sitemap-index.xml
