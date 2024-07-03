@@ -2,6 +2,7 @@
 import Footer from "@components/footer/footer.astro";
 import Navbar from "@components/navbar/navbar.astro";
 import { SEO } from "astro-seo";
+import { Schema } from "astro-seo-schema";
 // import Footer from "@components/footer.astro";
 // import Navbar from "@components/navbar/navbar.astro";
 // import "@fontsource-variable/inter/index.css";
@@ -13,27 +14,69 @@ export interface Props {
 
 // const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 
-
-
 const { title } = Astro.props;
 
-const makeTitle = title
-    ? title + " | " + "APM"
-    : "APM";
+const makeTitle = title ? title + " | " + "APM" : "APM";
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="google-site-verification" content="xoDzBFBCYeHaEQGsbCo8ddmBxBKf8SZTLkwoKgqPFuE" />
+        <meta
+            name="google-site-verification"
+            content="xoDzBFBCYeHaEQGsbCo8ddmBxBKf8SZTLkwoKgqPFuE"
+        />
         <link rel="sitemap" href="/sitemap-index.xml" />
         <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/svg+xml" href="/apm_footer.webp" />
+        <link rel="icon" type="image/svg+xml" href="/apm_footer.svg" />
         <meta name="generator" content={Astro.generator} />
         <meta name="robots" content="index, follow" />
-
-        <!-- <link rel="preload" as="image" href={src} alt="Hero" /> -->
+        <Schema
+            item={{
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                name: "APM Medical Tools",
+                url: "https://apm-medical.co.id",
+                mainEntity: {
+                    "@type": "ItemList",
+                    itemListElement: [
+                        {
+                            "@type": "ListItem",
+                            position: 2,
+                            url: "https://apm-medical.co.id/news",
+                            name: "Blog",
+                            description:
+                                "Read our latest articles and updates on medical tools and healthcare solutions.",
+                        },
+                        {
+                            "@type": "ListItem",
+                            position: 1,
+                            url: "https://apm-medical.co.id/products",
+                            name: "Products",
+                            description:
+                                "Explore our extensive catalog of high-quality medical tools and devices.",
+                        },
+                        {
+                            "@type": "ListItem",
+                            position: 2,
+                            url: "https://apm-medical.co.id/events",
+                            name: "Events",
+                            description:
+                                "Read our latest articles and updates on medical tools and healthcare solutions.",
+                        },
+                        {
+                            "@type": "ListItem",
+                            position: 3,
+                            url: "https://apm-medical.co.id/partners",
+                            name: "Partners",
+                            description:
+                                "Discover our strategic alliances and collaborations with healthcare providers.",
+                        },
+                    ],
+                },
+            }}
+        />
         <SEO
             title={makeTitle}
             description="APM offers high-quality, affordable healthcare solutions tailored to meet your needs."

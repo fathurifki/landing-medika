@@ -59,7 +59,7 @@ async function fetchPartner(): Promise<{ partnerData: any[] } | undefined> {
   }
 }
 
-async function fetchMedical(): Promise<{ medicalData: any[] } | undefined> {
+async function fetchMedical(): Promise<{ medicalData: any[], category: any[], subCategory: any[] } | undefined> {
   try {
     const response = await fetch(`${VITE_API_URL}/items/medical_specialty`);
     const category = await fetch(`${VITE_API_URL}/items/category_product`);
@@ -353,8 +353,7 @@ const randomCatalog = catalogData
     </section>
 
     <section>
-      <FormPage client:load apiUrl={VITE_API_URL} imageUrl={VITE_IMAGE_URL} />
+      <FormPage client:load apiUrl={VITE_API_URL} />
     </section>
   </main>
 </Layouts>
-

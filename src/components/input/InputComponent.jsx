@@ -17,6 +17,8 @@ const useDebounce = (value, delay) => {
 };
 
 const InputComponent = ({ ...props }) => {
+    const subCategoryProps = props?.url?.searchParams?.get("sub");
+
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState({
         name: {
@@ -28,7 +30,7 @@ const InputComponent = ({ ...props }) => {
     });
 
     const [category, setCategory] = useState(props?.params || '');
-    const [subCategory, setSubCategory] = useState('');
+    const [subCategory, setSubCategory] = useState(subCategoryProps || '');
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);
     const [subCategories, setSubCategories] = useState([]);
@@ -105,12 +107,12 @@ const InputComponent = ({ ...props }) => {
         }
     };
 
-    useEffect(() => {
-        if (props.url?.searchParams) {
-            const subCategory = props.url.searchParams.get("sub");
-            setSubCategory(subCategory);
-        }
-    }, [props.url?.searchParams]);
+    // useEffect(() => {
+    //     if (props?.url?.searchParams) {
+    //         const subCategory = props?.url?.searchParams?.get("sub");
+    //         setSubCategory(subCategory);
+    //     }
+    // }, [props?.url?.searchParams]);
 
     useEffect(() => {
         fetchCategory();
@@ -119,11 +121,11 @@ const InputComponent = ({ ...props }) => {
     }, []);
 
     useEffect(() => {
-        const subCategoryProps = props.url.searchParams.get("sub");
+        const subCategoryProps = props?.url?.searchParams?.get("sub");
         const selectedCategory = category !== "" ? category : props?.params;
         const initialSubCategory = subCategory ? subCategory : subCategoryProps;
         fetchData({ name: name, category: selectedCategory, category_product: initialSubCategory, brand: brand });
-    }, [name, category, searchTerm.page, searchTerm.limit, subCategory, brand]);
+    }, [name, category, searchTerm.page, searchTerm.limit, subCategory, brand, props?.url?.searchParams]);
 
     return (
         <div>
