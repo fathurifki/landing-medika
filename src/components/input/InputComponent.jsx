@@ -202,7 +202,7 @@ const InputComponent = ({ ...props }) => {
                                         <a href={`/product-detail/${product.uuid}`} className="w-full h-full flex justify-center items-center">
                                             {product?.product_image ? (
                                                 <img
-                                                    src={`${props.IMAGE_URL}/${product.product_image}?format=webp&quality=75`}
+                                                    src={`${props.IMAGE_URL}/${product.product_image}`}
                                                     alt={product.name}
                                                     className="w-full h-full rounded-lg object-contain"
                                                 />

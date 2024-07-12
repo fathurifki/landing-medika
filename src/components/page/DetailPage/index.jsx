@@ -19,11 +19,11 @@ const DetailPage = ({ ...props }) => {
 
                 const fetchedImages = [
                     {
-                        src: catalogProduct?.product_image ? `${props.IMAGE_URL}/${catalogProduct.product_image}?format=webp&quality=75` : "",
+                        src: catalogProduct?.product_image ? `${props.IMAGE_URL}/${catalogProduct.product_image}` : "",
                         alt: catalogProduct?.name ? `${catalogProduct.name}` : ""
                     },
                     {
-                        src: catalogProduct?.additional_image ? `${props.IMAGE_URL}/${catalogProduct.additional_image}?format=webp&quality=75` : "",
+                        src: catalogProduct?.additional_image ? `${props.IMAGE_URL}/${catalogProduct.additional_image}` : "",
                         alt: catalogProduct?.name ? `additional ${catalogProduct.name}` : ""
                     },
                 ];
@@ -31,7 +31,7 @@ const DetailPage = ({ ...props }) => {
                 const fetchedVideo = {
                     id: "video",
                     src: `${props.IMAGE_URL}/${catalogProduct?.product_video}`,
-                    thumbnail: `${props.IMAGE_URL}/${catalogProduct?.product_image}?format=webp&quality=75`,
+                    thumbnail: `${props.IMAGE_URL}/${catalogProduct?.product_image}`,
                     alt: "Video Thumbnail",
                 };
 
