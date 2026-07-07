@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 2,
+  "dockerfilePath": "./packages/dashboard/Dockerfile",
+  "buildArguments": {
+    "NEXT_PUBLIC_API_URL": "https://apm-medical.co.id/api",
+    "NEXT_PUBLIC_IMAGE_URL": "https://apm-medical.co.id/files"
+  }
+}

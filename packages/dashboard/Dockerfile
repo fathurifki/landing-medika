@@ -13,8 +13,13 @@ FROM deps AS builder
 WORKDIR /app
 COPY packages/dashboard ./packages/dashboard
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_IMAGE_URL
+# Baked in at build time — CapRover doesn't forward app env vars as build
+# args, so these defaults target the current CapRover test domain. Update
+# before rebuilding for the real production domain (see INSTALL.md).
+ARG NEXT_PUBLIC_API_URL=https://apm-medical.co.id/api
+ARG NEXT_PUBLIC_IMAGE_URL=https://apm-medical.co.id/files
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_IMAGE_URL=${NEXT_PUBLIC_IMAGE_URL}
 RUN pnpm --filter dashboard run build
 
 # ── runner ────────────────────────────────────────────────────────────────────
@@ -32,6 +37,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/packages/dashboard/.next/static .
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3000/dashboard/api/health || exit 1
