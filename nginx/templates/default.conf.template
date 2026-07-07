@@ -1,0 +1,126 @@
+upstream landing_upstream {
+  server landing:4321;
+}
+
+upstream dashboard_upstream {
+  server dashboard:3000;
+}
+
+upstream backend_upstream {
+  server backend:3001;
+}
+
+server {
+  listen 80;
+  server_name ${ROOT_DOMAIN};
+  client_max_body_size 60m;
+
+  location /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
+}
+
+server {
+  listen 443 ssl;
+  http2 on;
+  server_name ${ROOT_DOMAIN};
+  client_max_body_size 60m;
+
+  ssl_certificate /etc/letsencrypt/live/${ROOT_DOMAIN}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/${ROOT_DOMAIN}/privkey.pem;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 1d;
+
+  location /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  location = /dashboard {
+    proxy_pass http://dashboard_upstream/dashboard;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_redirect off;
+  }
+
+  location /dashboard/ {
+    proxy_pass http://dashboard_upstream;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_redirect off;
+  }
+
+  location = /api {
+    proxy_pass http://backend_upstream/api;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_redirect off;
+  }
+
+  location /api/ {
+    proxy_pass http://backend_upstream;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_redirect off;
+  }
+
+  location = /files {
+    proxy_pass http://backend_upstream/files;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_redirect off;
+  }
+
+  location /files/ {
+    proxy_pass http://backend_upstream;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_redirect off;
+  }
+
+  location / {
+    proxy_pass http://landing_upstream;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Port $server_port;
+    proxy_redirect off;
+  }
+}

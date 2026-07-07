@@ -1,0 +1,153 @@
+---
+import Footer from "@components/footer/footer.astro";
+import Navbar from "@components/navbar/navbar.astro";
+import { SEO } from "astro-seo";
+import { Schema } from "astro-seo-schema";
+import { VITE_SITE_URL, VITE_IMAGE_URL } from "@lib/env";
+import { getLayoutData } from "@lib/layoutData";
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;        // full URL or uuid — auto-resolved
+  canonicalPath?: string; // e.g. "/products/123"
+  type?: "website" | "article" | "product";
+  noindex?: boolean;
+  structuredData?: object;
+}
+
+const {
+  title,
+  description = "APM Medical — Indonesia's trusted partner in high-quality medical device solutions for hospitals, clinics, and healthcare providers.",
+  image,
+  canonicalPath,
+  type = "website",
+  noindex = false,
+  structuredData,
+} = Astro.props;
+
+// Fetched once here and passed down — avoids Navbar and Footer each
+// independently re-fetching the same Company/category data on every page.
+const { company, categories, subCategories } = await getLayoutData();
+
+const SITE = (VITE_SITE_URL || "https://apm-medical.co.id").replace(/\/$/, "");
+const makeTitle = title ? `${title} | APM Medical` : "APM Medical — Your Trusted Healthcare Partner";
+const canonical = canonicalPath ? `${SITE}${canonicalPath}` : `${SITE}${Astro.url.pathname}`;
+
+// Resolve image: if it looks like a UUID use files endpoint, else use as-is
+const ogImage = image
+  ? image.startsWith("http")
+    ? image
+    : `${VITE_IMAGE_URL}/${image}`
+  : `${SITE}/APM.webp`;
+
+// Default Organisation structured data
+const defaultSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "PT Anugerah Prima Medika",
+  alternateName: "APM Medical",
+  url: SITE,
+  logo: `${SITE}/APM.webp`,
+  sameAs: [
+    "https://www.instagram.com/apm_medical.official/",
+    "https://www.linkedin.com/company/anugerah-prima-medika",
+    "https://www.youtube.com/channel/UCKeiXy9k3AQwCchTKCIeHHA",
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+62-21-38924177",
+    contactType: "customer service",
+    areaServed: "ID",
+    availableLanguage: ["Indonesian", "English"],
+  },
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Metland Puri, Grand Boulevard Blok D01 No 3",
+    addressLocality: "Tangerang",
+    addressRegion: "Banten",
+    addressCountry: "ID",
+  },
+};
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="google-site-verification" content="xoDzBFBCYeHaEQGsbCo8ddmBxBKf8SZTLkwoKgqPFuE" />
+
+    {noindex
+      ? <meta name="robots" content="noindex, nofollow" />
+      : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    }
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/apm_footer.svg" />
+
+    <!-- Preload critical assets -->
+    <link rel="preload" as="image" href="/bg.webp" type="image/webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <SEO
+      title={makeTitle}
+      description={description}
+      canonical={canonical}
+      openGraph={{
+        basic: {
+          title: makeTitle,
+          type,
+          image: ogImage,
+          url: canonical,
+        },
+        optional: {
+          description,
+          siteName: "APM Medical",
+          locale: "id_ID",
+        },
+        image: {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: makeTitle,
+        },
+      }}
+      twitter={{
+        card: "summary_large_image",
+        site: "@apm_medical",
+        creator: "@apm_medical",
+        title: makeTitle,
+        description,
+        image: ogImage,
+        imageAlt: makeTitle,
+      }}
+      extend={{
+        meta: [
+          { name: "theme-color", content: "#2980B9" },
+          { name: "author", content: "PT Anugerah Prima Medika" },
+          { name: "keywords", content: "medical device, alat kesehatan, APM Medical, hospital equipment, Indonesia" },
+          { property: "og:locale", content: "id_ID" },
+          { property: "og:locale:alternate", content: "en_US" },
+        ],
+        link: [
+          { rel: "alternate", hreflang: "id", href: canonical },
+          { rel: "alternate", hreflang: "x-default", href: canonical },
+        ],
+      }}
+    />
+
+    <!-- Structured Data -->
+    <Schema item={structuredData ?? defaultSchema} />
+  </head>
+  <body>
+    <Navbar company={company} categories={categories} subCategories={subCategories} />
+    <slot />
+    <Footer company={company} categories={categories} />
+    <style is:global>
+      html { scroll-behavior: smooth; }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,396 @@
+---
+title: "Welcome to My Landing Page";
+layout: "../layouts/BaseLayout.astro";
+import RemoteImage from "@components/RemoteImage.astro";
+import Newscard from "@components/newscard/newscard.astro";
+import Layouts from "@layouts/Layouts.astro";
+import FormPage from "@components/page/FormPage";
+import { INTERNAL_API_URL, VITE_API_URL, VITE_IMAGE_URL } from "@lib/env";
+
+async function fetchData(): Promise<{ blogData: any[] } | undefined> {
+  try {
+    // Only 3 published posts are ever rendered on the homepage — ask the API for exactly that.
+    const response = await fetch(`${INTERNAL_API_URL}/items/Blog?limit=3&status=published`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+      blogData: data?.data || [],
+    };
+  } catch (error) {
+    return;
+  }
+}
+
+async function fetchCatalog(): Promise<{ catalogData: any[] } | undefined> {
+  try {
+    // Fetch a small published pool to pick 8 random "featured" items from.
+    const response = await fetch(`${INTERNAL_API_URL}/items/Catalog?limit=12&status=published`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+      catalogData: data?.data || [],
+    };
+  } catch (error) {
+    return;
+  }
+}
+
+async function fetchPartner(): Promise<{ partnerData: any[] } | undefined> {
+  try {
+    // Homepage only ever shows the first 8 partners.
+    const response = await fetch(`${INTERNAL_API_URL}/items/partners?limit=8`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+      partnerData: data?.data || [],
+    };
+  } catch (error) {
+    return;
+  }
+}
+
+async function fetchMedical(): Promise<{ medicalData: any[], category: any[], subCategory: any[] } | undefined> {
+  try {
+    const [response, category, subCategory] = await Promise.all([
+      fetch(`${INTERNAL_API_URL}/items/medical_specialty`),
+      fetch(`${INTERNAL_API_URL}/items/category_product`),
+      fetch(`${INTERNAL_API_URL}/items/sub_category`),
+    ]);
+    if (!response?.ok) {
+      throw new Error(`HTTP error! status: ${response?.status}`);
+    }
+    const data = await response.json();
+    const categoryData = await category.json();
+    const subCategoryData = await subCategory.json();
+    return {
+      medicalData: data?.data || [],
+      category: categoryData?.data || [],
+      subCategory:
+        subCategoryData?.data.filter(
+          (item) => item.subCategory === "Ventilator",
+        )?.[0] || [],
+    };
+  } catch (error) {
+    return;
+  }
+}
+
+const [blogResult, catalogResult, partnerResult, medicalResult] =
+  await Promise.all([
+    fetchData(),
+    fetchCatalog(),
+    fetchPartner(),
+    fetchMedical(),
+  ]);
+
+const { blogData } = blogResult ?? { blogData: [] };
+const { catalogData } = catalogResult ?? { catalogData: [] };
+const { partnerData } = partnerResult ?? { partnerData: [] };
+const { medicalData, category, subCategory } = medicalResult ?? {
+  medicalData: [],
+  category: [],
+  subCategory: [],
+};
+const mappingData = medicalData.map((item) => {
+  const categoryItem = category.find(
+    (categoryItem) => item.title === categoryItem.name,
+  );
+  if (categoryItem) {
+    return {
+      ...item,
+      id: categoryItem.id,
+    };
+  }
+  return item;
+});
+const randomCatalog = catalogData
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 8)
+  .filter((item) => item.productImage !== null);
+---
+
+<Layouts
+  title="Indonesia's Premier Healthcare Partner"
+  description="APM Medical — Your trusted partner in medical device solutions. We supply high-quality medical equipment to hospitals and clinics across Indonesia."
+  canonicalPath="/"
+  structuredData={{
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    name: "PT Anugerah Prima Medika",
+    alternateName: "APM Medical",
+    url: "https://apm-medical.co.id",
+    logo: "https://apm-medical.co.id/APM.webp",
+    image: "https://apm-medical.co.id/bg.webp",
+    description: "Indonesia's trusted partner in medical device solutions. We specialize in partnerships with distributors, project owners, and hospitals.",
+    telephone: "+62-21-38924177",
+    email: "info@apm-medical.co.id",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Metland Puri, Grand Boulevard Blok D01 No 3",
+      addressLocality: "Tangerang",
+      addressRegion: "Banten",
+      addressCountry: "ID",
+    },
+    sameAs: [
+      "https://www.instagram.com/apm_medical.official/",
+      "https://www.linkedin.com/company/anugerah-prima-medika",
+      "https://www.youtube.com/channel/UCKeiXy9k3AQwCchTKCIeHHA",
+    ],
+    areaServed: "ID",
+    priceRange: "$$",
+  }}
+>
+  <main class="bg-white">
+    <section
+      id="home"
+      class="bg-cover bg-center text-white p-8 h-96 md:h-[500px]"
+      style="background-image: url('/bg.webp');"
+    >
+      <div
+        class="container h-full flex flex-col text-center justify-center items-center mx-auto md:flex md:flex-col md:justify-center md:items-start"
+      >
+        <h1 class="text-4xl font-bold mb-4 text-white">
+          Indonesia's Premier Healthcare Partner
+        </h1>
+        <p class="text-lg text-white font-bold">
+          Your trusted partner in medical device solutions
+        </p>
+      </div>
+    </section>
+
+    <section id="about-us" class="p-12 h-auto overflow-x-auto border-b">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold mb-6">About Us</h2>
+        <p class="mb-6 text-lg leading-relaxed">
+          Anugerah Prima Medika (APM) embraces the motto “Your Trusted Partner
+          in Medical Device Solutions” and operates primarily in Indonesia. We
+          specialize in partnerships with distributors, project owners, and
+          hospitals. APM manages its own local medical device brands and acts as
+          the sole agent for international medical manufacturers. Our clients
+          mainly include hospitals, clinics, and other healthcare facilities.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Product Development and Innovation:</b> We develop both local and global
+          high-quality medical devices tailored to the needs of our partners and
+          customers.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Partnerships and Collaborations:</b> We form strategic alliances with
+          companies, research institutions, and healthcare providers to expand our
+          product range and stimulate innovation through joint research and development.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Sales and Distribution Channels:</b> Our sales approach focuses on building
+          relationships with healthcare decision-makers. We sell our products directly
+          to end-users or through distributors.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Marketing and Branding:</b> Our marketing efforts highlight the clinical
+          advantages, dependability, and affordability of our products. We engage
+          in medical events, exhibitions, webinars, and direct outreach to promote
+          our devices.
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Service and Support:</b> We offer extensive after-sales services including
+          training, maintenance, and repairs, accessible 24/7 via our hotline (+62-811-8708-078).
+        </p>
+        <p class="mb-6 text-lg leading-relaxed">
+          <b>Customization and Flexibility:</b> We provide tailored solutions to
+          meet the diverse needs of our healthcare partners, including custom features
+          and integrations.
+        </p>
+      </div>
+    </section>
+
+    <section id="products" class="p-8 h-auto overflow-x-auto">
+      <div class="container mx-auto mt-10">
+        <h2 class="text-2xl font-bold mb-4">Medical Speciality Care</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {
+            mappingData?.map((item, index) => (
+              <div
+                class={`h-64 rounded-lg relative overflow-hidden bg-gray-200 filter grayscale hover:grayscale-0 transition-all duration-500 ease-in-out ${index === 0 || index === mappingData.length - 1 ? "md:col-span-2" : ""}`}
+              >
+                <a
+                  href={
+                    index === 0
+                      ? `/products?sub=${subCategory.id}`
+                      : `/products/${item.id}`
+                  }
+                >
+                  <img
+                    src={`${VITE_IMAGE_URL}/${item.image}`}
+                    alt={item.title}
+                    width={800}
+                    height={256}
+                    loading={index < 2 ? "eager" : "lazy"}
+                    fetchpriority={index === 0 ? "high" : "auto"}
+                    decoding="async"
+                    class="absolute inset-0 w-full h-full object-cover rounded-lg"
+                  />
+                  <div class="absolute inset-0 bg-black opacity-50 rounded-lg" />
+                  <div class="relative z-10 p-6 flex flex-col justify-end">
+                    <span
+                      class={`text-white text-2xl ${index === 0 ? "md:text-3xl" : ""}  font-bold`}
+                    >
+                      {item.title}
+                    </span>
+                    <div
+                      class={`text-white text-base mt-2 ${index === 0 ? "md:text-5xl" : ""}`}
+                      set:html={item?.description}
+                    />
+                    {index !== 0 && (
+                      <div class="mt-2 text-white font-bold hover:font-extrabold">
+                        <a href={`/products/${item.id}`}>Explore More</a>
+                      </div>
+                    )}
+                  </div>
+                </a>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="product" class="p-8 min-h-[400px]">
+      <div
+        class="container mx-auto flex flex-col md:flex-row items-center justify-between gap-8"
+      >
+        <div class="grid grid-cols-4 md:grid-cols-3 gap-8 md:w-1/2">
+          {
+            randomCatalog?.map((item, index) => (
+              <a href={`/product-detail/${item?.uuid}`} class="flex justify-center">
+                <div class="relative group">
+                  <RemoteImage
+                    src={`${VITE_IMAGE_URL}/${item.productImage}`}
+                    alt={item.name}
+                    loading={index < 4 ? "eager" : "lazy"}
+                    width={128}
+                    height={128}
+                    wrapperClass="w-32 h-32 rounded"
+                    imgClass="transition-all duration-500 ease-in-out"
+                  />
+                  <div class="absolute bottom-0 left-0 w-full bg-black bg-opacity-75 text-white text-center p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {item.name}
+                  </div>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+        <div class="text-left md:w-1/2">
+          <h2 class="text-2xl font-bold mb-4">Explore Our Products</h2>
+          <p class="mb-4">
+            We partner with top healthcare providers to deliver cutting-edge and
+            cost-effective healthcare solutions. Our collaborations guarantee
+            that you receive premium products and services designed to cater to
+            your health requirements.
+          </p>
+          <div class="text-left mt-4">
+            <button class="border border-gray-500 py-2 px-4 rounded">
+              <a href="/products" class="text-gray-500 hover:text-gray-700"
+                >More</a
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="p-8 min-h-[400px]">
+      <div
+        class="container mx-auto flex flex-col md:flex-row items-center justify-between gap-8"
+      >
+        <div class="text-left md:w-1/2">
+          <h2 class="text-2xl font-bold mb-4">
+            Our Trusted Healthcare Partners
+          </h2>
+          <p class="mb-4">
+            We collaborate with leading healthcare providers to bring you
+            innovative and affordable healthcare solutions. Our partnerships
+            ensure that you receive the highest quality products and services
+            tailored to meet your health needs.
+          </p>
+          <div class="text-left mt-4">
+            <button class="border border-gray-500 py-2 px-4 rounded">
+              <a href="/partners" class="text-gray-500 hover:text-gray-700"
+                >More</a
+              >
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-4 md:grid-cols-3 gap-8 md:w-1/2">
+          {
+            partnerData?.slice(0, 8).map((item) => (
+              <div class="flex justify-center items-center">
+                <RemoteImage
+                  src={`${VITE_IMAGE_URL}/${item.logos}`}
+                  alt={item.name}
+                  loading="eager"
+                  width={128}
+                  height={128}
+                  wrapperClass="w-32 h-32 rounded"
+                  imgClass="transition-all duration-500 ease-in-out"
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="news" class="border-b p-8 h-auto md:h-full">
+      <div class="container mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Latest News</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {
+            blogData ? (
+              blogData
+                .slice(0, 3)
+                .map(
+                  (item) =>
+                    item?.status === "published" && (
+                      <Newscard
+                        imgSrc={`${VITE_IMAGE_URL}/${item?.banner}`}
+                        imgAlt={item?.title}
+                        title={item?.title}
+                        description={item?.content}
+                        slugs={item?.slugs}
+                        id={item?.id}
+                      />
+                    ),
+                )
+            ) : (
+              <div class="col-span-3 text-center">
+                <p>Loading...</p>
+              </div>
+            )
+          }
+        </div>
+        {
+          blogData?.length > 3 && (
+            <div class="text-center mt-4 ">
+              <a
+                href="/news"
+                class="border p-2 rounded-md text-lg hover:text-gray-700 text-black font-semibold"
+              >
+                Read More News
+              </a>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <section>
+      <FormPage client:visible apiUrl={VITE_API_URL} />
+    </section>
+  </main>
+</Layouts>

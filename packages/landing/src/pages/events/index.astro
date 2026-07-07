@@ -1,0 +1,52 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import { INTERNAL_API_URL, VITE_IMAGE_URL } from "@lib/env";
+
+const API_URL = INTERNAL_API_URL;
+const IMAGE_URL = VITE_IMAGE_URL;
+
+// Previously fetched /items/event_types twice (once here, once via an unused
+// "eventCategory" variable) — a single fetch is all this page needs.
+async function getEvent() {
+    const response = await fetch(`${API_URL}/items/event_types`);
+    const event = await response.json();
+    return {
+        event: event.data,
+    };
+}
+
+const { event } = await getEvent();
+---
+
+<Layouts
+    title="Medical Society Events"
+    description="APM Medical participates in leading medical society events and exhibitions across Indonesia. Explore our event gallery."
+    canonicalPath="/events"
+>
+<section id="event-list" class="p-4 md:p-4 h-auto text-center">
+    <div class="container mx-auto">
+        <h2 class="text-xl md:text-2xl font-bold mb-4">We have participated below event :</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+            {
+                event?.map((item) => (
+                    <div class="cursor-pointer relative event-item p-4 border rounded-lg text-center flex justify-center items-center h-full">
+                        <a href={`/events/${item?.id}/${item?.slug}`} class="w-full h-full flex justify-center items-center">
+                            <img
+                                src={`${IMAGE_URL}/${item?.eventImage}`}
+                                alt={item?.eventName}
+                                class="w-full h-auto rounded-lg mb-4 object-contain"
+                                style="max-width: 200px; max-height: 200px;"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                            <h3 class="absolute font-bold bottom-0 bg-white text-black px-2 py-1 rounded-lg">
+                                {item?.nameEvents}
+                            </h3>
+                        </a>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</section>
+</Layouts>

@@ -1,0 +1,57 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import DetailPage from "@components/page/DetailPage/index.jsx";
+import { INTERNAL_API_URL, VITE_API_URL, VITE_IMAGE_URL } from "@lib/env";
+
+const { slug } = Astro.params;
+
+// Fetch product detail for SEO
+let product: any = null;
+try {
+  const res = await fetch(`${INTERNAL_API_URL}/items/Catalog/${slug}`);
+  if (res.ok) {
+    const json = await res.json();
+    product = json.data;
+  }
+} catch {}
+
+const title = product?.name ?? "Product Detail";
+const description = product?.description
+  ? product.description.replace(/<[^>]*>/g, "").slice(0, 160)
+  : `${title} — high-quality medical device from APM Medical Indonesia.`;
+const image = product?.productImage ?? null;
+
+const structuredData = product ? {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: product.name,
+  description,
+  image: image ? `${VITE_IMAGE_URL}/${image}` : undefined,
+  brand: { "@type": "Brand", name: "APM Medical" },
+  offers: {
+    "@type": "Offer",
+    availability: "https://schema.org/InStock",
+    priceCurrency: "IDR",
+    seller: { "@type": "Organization", name: "PT Anugerah Prima Medika" },
+  },
+} : undefined;
+---
+
+<Layouts
+  title={title}
+  description={description}
+  image={image ?? undefined}
+  canonicalPath={`/product-detail/${slug}`}
+  type="product"
+  structuredData={structuredData}
+>
+  <main class="p-8">
+    <DetailPage
+      client:visible
+      slug={slug}
+      API_URL={VITE_API_URL}
+      IMAGE_URL={VITE_IMAGE_URL}
+      initialProduct={product}
+    />
+  </main>
+</Layouts>

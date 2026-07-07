@@ -1,0 +1,63 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import EventGallery from "@components/page/EventsPage/index.astro";
+import { INTERNAL_API_URL, VITE_IMAGE_URL } from "@lib/env";
+
+const API_URL = INTERNAL_API_URL;
+const IMAGE_URL = VITE_IMAGE_URL;
+
+async function getEvent(event_slug: string) {
+  try {
+    const res = await fetch(`${API_URL}/items/Events?filter=${JSON.stringify({ medical_events: { _eq: event_slug } })}`);
+    if (!res.ok) return { event: null };
+    const json = await res.json();
+    return { event: json?.data ?? [] };
+  } catch { return { event: [] }; }
+}
+
+async function getEventDetail(event_slug: string) {
+  try {
+    const res = await fetch(`${API_URL}/items/event_types/${event_slug}`);
+    if (!res.ok) return { eventDetail: null };
+    const json = await res.json();
+    return { eventDetail: json?.data ?? null };
+  } catch { return { eventDetail: null }; }
+}
+
+const { slug, id } = Astro.params;
+// EventsPage never actually used eventCategory — dropped that redundant
+// /items/event_types fetch and parallelized the two that remain.
+const [{ event }, { eventDetail }] = await Promise.all([
+  getEvent(id!),
+  getEventDetail(id!),
+]);
+
+const title = eventDetail?.nameEvents ?? eventDetail?.eventName ?? "Medical Event";
+const rawDesc = eventDetail?.description ? eventDetail.description.replace(/<[^>]*>/g, "").slice(0, 160) : "";
+const description = rawDesc || `APM Medical participated in ${title} — explore the event gallery and highlights.`;
+const image = eventDetail?.eventImage ?? null;
+
+const structuredData = eventDetail ? {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: title,
+  description,
+  image: image ? `${IMAGE_URL}/${image}` : undefined,
+  organizer: { "@type": "Organization", name: "PT Anugerah Prima Medika" },
+  location: { "@type": "Place", name: "Indonesia", address: { "@type": "PostalAddress", addressCountry: "ID" } },
+} : undefined;
+---
+
+<Layouts
+  title={title}
+  description={description}
+  image={image ?? undefined}
+  canonicalPath={`/events/${id}/${slug}`}
+  structuredData={structuredData}
+>
+  <EventGallery
+    event={event}
+    IMAGE_URL={IMAGE_URL}
+    eventDetail={eventDetail}
+  />
+</Layouts>

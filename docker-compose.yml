@@ -1,0 +1,187 @@
+services:
+  # ── PostgreSQL ───────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: apm_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-apm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-apm_medical}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-apm} -d ${POSTGRES_DB:-apm_medical}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+  # ── Backend ──────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    container_name: apm_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-apm}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-apm_medical}
+      BACKEND_PORT: 3001
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE:-52428800}
+      DASHBOARD_ORIGIN: ${DASHBOARD_ORIGIN}
+      LANDING_ORIGIN: ${LANDING_ORIGIN}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+    volumes:
+      - uploads_data:/app/uploads
+    expose:
+      - "3001"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+  # ── Dashboard ─────────────────────────────────────────────────────────────────
+  dashboard:
+    build:
+      context: .
+      dockerfile: packages/dashboard/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_IMAGE_URL: ${NEXT_PUBLIC_IMAGE_URL}
+    container_name: apm_dashboard
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      HOSTNAME: "0.0.0.0"
+      BACKEND_URL: http://backend:3001/api
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_IMAGE_URL: ${NEXT_PUBLIC_IMAGE_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+    expose:
+      - "3000"
+    networks:
+      - app_network
+
+  # ── Landing ───────────────────────────────────────────────────────────────────
+  landing:
+    build:
+      context: .
+      dockerfile: packages/landing/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_IMAGE_URL: ${VITE_IMAGE_URL}
+        VITE_SITE_URL: ${VITE_SITE_URL}
+    container_name: apm_landing
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      HOST: "0.0.0.0"
+      INTERNAL_API_URL: http://backend:3001/api
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_IMAGE_URL: ${VITE_IMAGE_URL}
+      VITE_SITE_URL: ${VITE_SITE_URL}
+    expose:
+      - "4321"
+    networks:
+      - app_network
+
+  # ── Nginx reverse proxy ──────────────────────────────────────────────────────
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    container_name: apm_nginx
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+      dashboard:
+        condition: service_started
+      landing:
+        condition: service_started
+    environment:
+      ROOT_DOMAIN: ${ROOT_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot_www:/var/www/certbot
+      - letsencrypt_data:/etc/letsencrypt
+    networks:
+      - app_network
+
+  # ── TLS bootstrap ────────────────────────────────────────────────────────────
+  # Only runs on the real VPS (needs ROOT_DOMAIN to actually resolve to this
+  # host on port 80/443). Enable it by setting COMPOSE_PROFILES=ssl in the
+  # server's .env — leave it unset for local development so Let's Encrypt
+  # requests aren't attempted (and rate-limited) from a non-public machine.
+  certbot_init:
+    image: certbot/certbot:latest
+    container_name: apm_certbot_init
+    restart: "no"
+    profiles: ["ssl"]
+    depends_on:
+      nginx:
+        condition: service_started
+    pid: "service:nginx"
+    environment:
+      ROOT_DOMAIN: ${ROOT_DOMAIN}
+      CERTBOT_EMAIL: ${CERTBOT_EMAIL}
+    entrypoint: ["/bin/sh", "/scripts/init.sh"]
+    volumes:
+      - certbot_www:/var/www/certbot
+      - letsencrypt_data:/etc/letsencrypt
+      - ./certbot:/scripts:ro
+    networks:
+      - app_network
+
+  certbot_renew:
+    image: certbot/certbot:latest
+    container_name: apm_certbot_renew
+    restart: unless-stopped
+    profiles: ["ssl"]
+    depends_on:
+      nginx:
+        condition: service_started
+    pid: "service:nginx"
+    environment:
+      ROOT_DOMAIN: ${ROOT_DOMAIN}
+      CERTBOT_EMAIL: ${CERTBOT_EMAIL}
+    entrypoint: ["/bin/sh", "/scripts/renew.sh"]
+    volumes:
+      - certbot_www:/var/www/certbot
+      - letsencrypt_data:/etc/letsencrypt
+      - ./certbot:/scripts:ro
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+  uploads_data:
+  certbot_www:
+  letsencrypt_data:
+
+networks:
+  app_network:

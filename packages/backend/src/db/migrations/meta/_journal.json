@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1782885561950,
+      "tag": "0000_fancy_patch",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782887292908,
+      "tag": "0001_nosy_bloodscream",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783132111133,
+      "tag": "0002_nosy_albert_cleary",
+      "breakpoints": true
+    }
+  ]
+}

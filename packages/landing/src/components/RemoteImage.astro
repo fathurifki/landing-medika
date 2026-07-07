@@ -1,0 +1,40 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  wrapperClass?: string;
+  width?: number;
+  height?: number;
+  loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low" | "auto";
+  fit?: "cover" | "contain";
+}
+
+const {
+  src,
+  alt,
+  class: imgClass = "",
+  wrapperClass = "",
+  width,
+  height,
+  loading = "lazy",
+  fetchpriority,
+  fit = "contain",
+} = Astro.props;
+
+const fitClass = fit === "cover" ? "object-cover" : "object-contain";
+---
+
+<span class:list={["block overflow-hidden", wrapperClass]}>
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    decoding="async"
+    fetchpriority={fetchpriority}
+    class:list={[fitClass, "w-full h-full", imgClass]}
+  />
+</span>

@@ -1,0 +1,28 @@
+---
+import RemoteImage from "@components/RemoteImage.astro";
+const { event, IMAGE_URL, eventDetail } = Astro.props;
+---
+
+<section class="p-8">
+    <h2 class="text-3xl text-center font-bold mb-4">{eventDetail?.nameEvents}</h2>
+    <div set:html={eventDetail?.description} />
+    <div
+        class="mt-4 gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-2 max-h-96 overflow-y-scroll sm:justify-start justify-center"
+    >
+        {
+            event?.map((event) => (
+                <div class="gallery-item mb-6">
+                    <RemoteImage
+                        src={`${IMAGE_URL}/${event.eventImage}`}
+                        height={200}
+                        width={200}
+                        alt={eventDetail?.nameEvents}
+                        wrapperClass="w-full h-72 rounded shadow"
+                        loading="lazy"
+                        fit="cover"
+                    />
+                </div>
+            ))
+        }
+    </div>
+</section>

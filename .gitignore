@@ -13,9 +13,26 @@ yarn-error.log*
 pnpm-debug.log*
 
 
-# environment variables
+# environment variables — single source of truth is root .env
 .env
+.env.local
 .env.production
+.env.development.local
+.env.test.local
+.env.production.local
+packages/**/.env
+packages/**/.env.local
 
 # macOS-specific files
 .DS_Store
+
+# uploaded media — persisted via Docker volume / VPS disk, not git.
+# Restore from a backup (see scripts/backup.sh) instead of committing these.
+packages/backend/uploads/*
+!packages/backend/uploads/.gitkeep
+
+# local backup artifacts
+backups/
+# temporary ssh credentials (never commit)
+.env.ssh
+.env.shh

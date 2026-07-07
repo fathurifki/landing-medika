@@ -1,0 +1,84 @@
+---
+import { Icon } from "astro-icon/components";
+import RemoteImage from "@components/RemoteImage.astro";
+import { VITE_IMAGE_URL } from "@lib/env";
+import type { LayoutCompany, LayoutCategory } from "@lib/layoutData";
+
+export interface Props {
+    company: LayoutCompany | null;
+    categories: LayoutCategory[];
+}
+
+// Company/category data is fetched once in Layouts.astro and passed down —
+// avoids duplicating the same backend calls Navbar also needs.
+const { company, categories } = Astro.props;
+---
+
+<footer class="bg-gray-100 p-8 text-gray-700 min-h-[280px]">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+            <RemoteImage
+                src={`${VITE_IMAGE_URL}/${company?.logoFooter}`}
+                alt="Apmedika Logo"
+                loading="eager"
+                width={100}
+                height={64}
+                wrapperClass="mb-4 h-16 w-[100px]"
+            />
+            <p class="text-justify">
+                <b>APM</b> provides high-quality, affordable treatment.
+                We serve all hospitals in Indonesia and educate medical staff on
+                our products. Our 24/7 support ensures flawless device operation.
+            </p>
+            <div class="flex space-x-4 mt-4">
+                <a href={company?.instagram}>
+                    <Icon name="mdi:instagram" class="w-6 h-6" />
+                </a>
+                <a href={company?.linkedin}>
+                    <Icon name="mdi:linkedin" class="w-6 h-6" />
+                </a>
+                <a href={company?.youtube}>
+                    <Icon name="mdi:youtube" class="w-6 h-6" />
+                </a>
+            </div>
+        </div>
+        <div>
+            <h3 class="font-bold mb-4">Useful Links</h3>
+            <ul class="space-y-2">
+                <li><a href="/news?page=1" class="hover:underline">News</a></li>
+                <li><a href="/products" class="hover:underline">Products</a></li>
+                <li><a href="/events" class="hover:underline">Events</a></li>
+                <li><a href="/partners" class="hover:underline">Partners</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="font-bold mb-4">Medical Speciality Care</h3>
+            <ul class="space-y-2">
+                {
+                    categories?.map((category) => (
+                        <li>
+                            <a
+                                href={`/products/${category.id}`}
+                                class="hover:underline"
+                            >
+                                {category.name}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+        <div class="space-y-4">
+            <h3 class="font-bold mb-4">Contacts</h3>
+            <p>
+                <strong>Address:</strong>
+                {company?.address}
+            </p>
+            <p><strong>Email:</strong> {company?.emailAddress}</p>
+            <p>
+                <strong>Phone:</strong>
+                {company?.phoneNumber}
+            </p>
+        </div>
+    </div>
+</footer>

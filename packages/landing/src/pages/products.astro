@@ -1,0 +1,57 @@
+---
+import Layouts from "@layouts/Layouts.astro";
+import InputComponent from "@components/input/InputComponent.jsx";
+import { SEO } from "astro-seo";
+import { INTERNAL_API_URL, VITE_API_URL, VITE_IMAGE_URL } from "@lib/env";
+
+const API_URL = VITE_API_URL;
+const INTERNAL_URL = INTERNAL_API_URL;
+const IMAGE_URL = VITE_IMAGE_URL;
+const url = new URL(Astro.request.url);
+
+// Fetch taxonomy server-side so InputComponent doesn't have to re-fetch the
+// same category/sub-category/brand lists on the client after hydration.
+let initialCategories = [];
+let initialSubCategories = [];
+let initialBrands = [];
+try {
+    const [categoryRes, subCategoryRes, brandRes] = await Promise.all([
+        fetch(`${INTERNAL_URL}/items/category_product`),
+        fetch(`${INTERNAL_URL}/items/sub_category`),
+        fetch(`${INTERNAL_URL}/items/brand`),
+    ]);
+    const [categoryJson, subCategoryJson, brandJson] = await Promise.all([
+        categoryRes.ok ? categoryRes.json() : null,
+        subCategoryRes.ok ? subCategoryRes.json() : null,
+        brandRes.ok ? brandRes.json() : null,
+    ]);
+    initialCategories = categoryJson?.data ?? [];
+    initialSubCategories = subCategoryJson?.data ?? [];
+    initialBrands = brandJson?.data ?? [];
+} catch {}
+---
+
+<Layouts
+    title="Healthcare Products"
+    description="Explore APM Medical's extensive catalog of high-quality medical devices and equipment for hospitals and clinics across Indonesia."
+    canonicalPath="/products"
+>
+    <main class="p-8">
+        <SEO
+            title="APM Medical Tools - High Quality Medical Devices"
+            description="Search and explore our extensive catalog of high-quality medical tools and devices. Find the best solutions tailored to your medical needs."
+        />
+        <section id="product-search" class="mb-8">
+            <InputComponent
+                client:load
+                params={Astro.params}
+                API_URL={API_URL}
+                IMAGE_URL={IMAGE_URL}
+                url={url}
+                initialCategories={initialCategories}
+                initialSubCategories={initialSubCategories}
+                initialBrands={initialBrands}
+            />
+        </section>
+    </main>
+</Layouts>
