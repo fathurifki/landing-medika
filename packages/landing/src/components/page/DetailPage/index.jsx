@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DOMPurify from 'isomorphic-dompurify';
+import { sanitizeHtml } from '@lib/sanitize';
 import styles from "./detail.module.css"
 
 function deriveMedia(catalogProduct, IMAGE_URL) {
@@ -164,7 +164,7 @@ const DetailPage = ({ ...props }) => {
                     <div className="flex flex-col">
                         <p>Name: {product?.name}</p>
                         <p>Description:</p>
-                        <div className={styles.description} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product?.description) }} />
+                        <div className={styles.description} dangerouslySetInnerHTML={{ __html: sanitizeHtml(product?.description) }} />
                     </div>
                 </div>
             </section>

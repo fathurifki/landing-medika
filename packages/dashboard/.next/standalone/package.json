@@ -1,0 +1,19 @@
+{
+  "name": "apm-medical",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev": "bash scripts/ensure-db.sh && pnpm --parallel -r dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "dev:landing": "pnpm --filter landing dev",
+    "dev:backend": "bash scripts/ensure-db.sh && pnpm --filter backend dev",
+    "dev:dashboard": "pnpm --filter dashboard dev",
+    "backup": "bash scripts/backup.sh",
+    "restore": "bash scripts/restore.sh"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

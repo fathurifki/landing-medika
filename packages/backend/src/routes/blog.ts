@@ -4,6 +4,7 @@ import { blogs } from "../db/schema";
 import { eq, desc, ilike, and, sql } from "drizzle-orm";
 import { authMiddleware } from "../middleware/auth";
 import { z } from "zod";
+import { sanitizeRichTextFields } from "../lib/sanitize";
 
 const blogSchema = z.object({
   title: z.string().min(1),
@@ -57,7 +58,7 @@ blogRoutes.post("/", authMiddleware, async (c) => {
   const parsed = blogSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
 
-  const [created] = await db.insert(blogs).values(parsed.data).returning();
+  const [created] = await db.insert(blogs).values(sanitizeRichTextFields(parsed.data, ["content"])).returning();
   return c.json({ data: created }, 201);
 });
 
@@ -72,7 +73,7 @@ blogRoutes.put("/:id", authMiddleware, async (c) => {
 
   const [updated] = await db
     .update(blogs)
-    .set({ ...parsed.data, updatedAt: new Date() })
+    .set({ ...sanitizeRichTextFields(parsed.data, ["content"]), updatedAt: new Date() })
     .where(eq(blogs.id, id))
     .returning();
 

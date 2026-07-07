@@ -7,6 +7,7 @@ import { Trash2, Plus } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { SafeHtml } from "@/components/ui/SafeHtml";
 import { useConfirmDelete } from "@/hooks/useConfirmDelete";
 import { dashboardAppRoutes } from "@/lib/routes";
 
@@ -61,7 +62,13 @@ export default function MedicalSpecialtyPage() {
               </div>
               <div className="p-3">
                 <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
-                {item.description && <p className="text-xs text-gray-500 mt-1 line-clamp-2" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                {item.description && (
+                  <SafeHtml
+                    as="p"
+                    html={item.description}
+                    className="text-xs text-gray-500 mt-1 line-clamp-2"
+                  />
+                )}
                 <div className="flex gap-2 mt-3">
                   <Link href={`${dashboardAppRoutes.medicalSpecialty}/${item.id}`} className="flex-1 text-center text-xs py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Edit</Link>
                   <button

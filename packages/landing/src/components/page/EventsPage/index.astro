@@ -1,11 +1,12 @@
 ---
 import RemoteImage from "@components/RemoteImage.astro";
+import { sanitizeHtml } from "@lib/sanitize";
 const { event, IMAGE_URL, eventDetail } = Astro.props;
 ---
 
 <section class="p-8">
     <h2 class="text-3xl text-center font-bold mb-4">{eventDetail?.nameEvents}</h2>
-    <div set:html={eventDetail?.description} />
+    <div set:html={sanitizeHtml(eventDetail?.description)} />
     <div
         class="mt-4 gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-2 max-h-96 overflow-y-scroll sm:justify-start justify-center"
     >

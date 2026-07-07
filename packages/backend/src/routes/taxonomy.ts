@@ -5,6 +5,7 @@ import { eq, desc, asc } from "drizzle-orm";
 import { authMiddleware } from "../middleware/auth";
 import { ttlCache } from "../middleware/cache";
 import { z } from "zod";
+import { sanitizeRichTextFields } from "../lib/sanitize";
 
 // Taxonomy tables are small reference data (categories, brands, specialties)
 // fetched on nearly every page load (navbar/footer/product filters). Cache
@@ -54,7 +55,7 @@ medicalSpecialtyRoutes.put("/:id", authMiddleware, async (c) => {
   try { body = await c.req.json(); } catch { return c.json({ error: "Invalid JSON" }, 400); }
   const parsed = specialtySchema.partial().safeParse(body);
   if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
-  const [updated] = await db.update(medicalSpecialties).set({ ...parsed.data, updatedAt: new Date() }).where(eq(medicalSpecialties.id, id)).returning();
+  const [updated] = await db.update(medicalSpecialties).set({ ...sanitizeRichTextFields(parsed.data, ["description"]), updatedAt: new Date() }).where(eq(medicalSpecialties.id, id)).returning();
   if (!updated) return c.json({ error: "Not found" }, 404);
   return c.json({ data: updated });
 });

@@ -1,5 +1,6 @@
 ---
 import RemoteImage from "@components/RemoteImage.astro";
+import { sanitizeHtml } from "@lib/sanitize";
 
 export interface NewsCardProps {
     imgSrc: string;
@@ -25,6 +26,6 @@ const { imgSrc, imgAlt, title, description, slugs, id } = Astro.props;
         <h3 class="text-xl font-bold">
             {title}
         </h3>
-        <div class="line-clamp-3" set:html={description} />
+        <div class="line-clamp-3" set:html={sanitizeHtml(description)} />
     </a>
 </div>

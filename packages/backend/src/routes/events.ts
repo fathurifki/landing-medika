@@ -5,6 +5,7 @@ import { eq, desc, ilike, sql } from "drizzle-orm";
 import { authMiddleware } from "../middleware/auth";
 import { ttlCache } from "../middleware/cache";
 import { z } from "zod";
+import { sanitizeRichTextFields } from "../lib/sanitize";
 
 // ── Event Types ───────────────────────────────────────────────────────────────
 
@@ -42,7 +43,7 @@ eventTypeRoutes.post("/", authMiddleware, async (c) => {
   try { body = await c.req.json(); } catch { return c.json({ error: "Invalid JSON" }, 400); }
   const parsed = eventTypeSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
-  const [created] = await db.insert(eventTypes).values(parsed.data).returning();
+  const [created] = await db.insert(eventTypes).values(sanitizeRichTextFields(parsed.data, ["description"])).returning();
   return c.json({ data: created }, 201);
 });
 eventTypeRoutes.put("/:id", authMiddleware, async (c) => {
@@ -51,7 +52,7 @@ eventTypeRoutes.put("/:id", authMiddleware, async (c) => {
   try { body = await c.req.json(); } catch { return c.json({ error: "Invalid JSON" }, 400); }
   const parsed = eventTypeSchema.partial().safeParse(body);
   if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
-  const [updated] = await db.update(eventTypes).set({ ...parsed.data, updatedAt: new Date() }).where(eq(eventTypes.id, id)).returning();
+  const [updated] = await db.update(eventTypes).set({ ...sanitizeRichTextFields(parsed.data, ["description"]), updatedAt: new Date() }).where(eq(eventTypes.id, id)).returning();
   if (!updated) return c.json({ error: "Not found" }, 404);
   return c.json({ data: updated });
 });

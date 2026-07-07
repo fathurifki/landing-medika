@@ -4,6 +4,7 @@ import { catalog } from "../db/schema";
 import { eq, desc, and, ilike, sql } from "drizzle-orm";
 import { authMiddleware } from "../middleware/auth";
 import { z } from "zod";
+import { sanitizeRichTextFields } from "../lib/sanitize";
 
 const catalogSchema = z.object({
   name: z.string().min(1),
@@ -94,7 +95,7 @@ catalogRoutes.post("/", authMiddleware, async (c) => {
   const parsed = catalogSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
 
-  const [created] = await db.insert(catalog).values(parsed.data).returning();
+  const [created] = await db.insert(catalog).values(sanitizeRichTextFields(parsed.data, ["description"])).returning();
   return c.json({ data: created }, 201);
 });
 
@@ -109,7 +110,7 @@ catalogRoutes.put("/:uuid", authMiddleware, async (c) => {
 
   const [updated] = await db
     .update(catalog)
-    .set({ ...parsed.data, updatedAt: new Date() })
+    .set({ ...sanitizeRichTextFields(parsed.data, ["description"]), updatedAt: new Date() })
     .where(eq(catalog.uuid, uuid))
     .returning();
 

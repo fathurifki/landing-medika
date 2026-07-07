@@ -6,6 +6,7 @@ import Newscard from "@components/newscard/newscard.astro";
 import Layouts from "@layouts/Layouts.astro";
 import FormPage from "@components/page/FormPage";
 import { INTERNAL_API_URL, VITE_API_URL, VITE_IMAGE_URL } from "@lib/env";
+import { sanitizeHtml } from "@lib/sanitize";
 
 async function fetchData(): Promise<{ blogData: any[] } | undefined> {
   try {
@@ -243,7 +244,7 @@ const randomCatalog = catalogData
                     </span>
                     <div
                       class={`text-white text-base mt-2 ${index === 0 ? "md:text-5xl" : ""}`}
-                      set:html={item?.description}
+                      set:html={sanitizeHtml(item?.description)}
                     />
                     {index !== 0 && (
                       <div class="mt-2 text-white font-bold hover:font-extrabold">

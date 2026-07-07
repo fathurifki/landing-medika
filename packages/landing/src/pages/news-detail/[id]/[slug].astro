@@ -2,6 +2,7 @@
 import Layouts from "@layouts/Layouts.astro";
 import RemoteImage from "@components/RemoteImage.astro";
 import { INTERNAL_API_URL, VITE_IMAGE_URL } from "@lib/env";
+import { sanitizeHtml } from "@lib/sanitize";
 
 const API_URL = INTERNAL_API_URL;
 const IMAGE_URL = VITE_IMAGE_URL;
@@ -74,7 +75,7 @@ const structuredData = blog ? {
             fit="cover"
           />
         )}
-        <Fragment class="text-lg leading-relaxed" set:html={blog?.content} />
+        <div class="text-lg leading-relaxed" set:html={sanitizeHtml(blog?.content)} />
       </section>
 
       {blog?.tags?.length > 0 && (
